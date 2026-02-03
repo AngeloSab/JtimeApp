@@ -1,8 +1,8 @@
 package it.unicam.cs.mpgc.jtime119200.gui;
 import it.unicam.cs.mpgc.jtime119200.Activity;
 import it.unicam.cs.mpgc.jtime119200.Day;
+import it.unicam.cs.mpgc.jtime119200.ProjectProgressionCalcutator;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -10,12 +10,9 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.*;
 import javafx.util.Duration;
 
-import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -158,6 +155,7 @@ public class WeeklyView extends BorderPane {
     }
 
     public void showReport(Activity activity) {
+        ProjectProgressionCalcutator ppc = new ProjectProgressionCalcutator(activity.getProject());
         reportBox.getChildren().clear();
         reportBox.setSpacing(20);
         reportBox.setAlignment(Pos.CENTER_LEFT);
@@ -173,36 +171,43 @@ public class WeeklyView extends BorderPane {
                 "Estimation Difference: " + activity.estimationDifference().toMinutes() + " (in minutes);");
 
         reportBox.getChildren().addAll(activityInfo1, activityInfo2);
+        VBox progressBar = getProgressBar(ppc, activity);
 
-        VBox progressBar = getProgressBar(activity);
+        VBox reportProject = reportProjectProgression(ppc, activity);
+        reportProject.setAlignment(Pos.CENTER_LEFT);
+        reportProject.setVisible(ppc.checkCompleted());
+
+
         Button exitButton = new Button("Exit");
         exitButton.setStyle("""
             -fx-border-color: red;
         """);
         exitButton.setAlignment(Pos.TOP_RIGHT);
-        exitButton.setOnAction(e -> {
-            reportBox.setVisible(false);
-        });
+        exitButton.setOnAction(e -> reportBox.setVisible(false));
 
-
-
-        reportBox.getChildren().addAll(progressBar, exitButton);
+        reportBox.getChildren().addAll(progressBar, reportProject, exitButton);
     }
 
-    private static VBox getProgressBar(Activity activity) {
+    private VBox reportProjectProgression(ProjectProgressionCalcutator ppc, Activity activity) {
+        VBox reportProjectProgression = new VBox();
+        Label projectProgressionLabel = new Label("Congratulation! Project "+activity.getProject()+" Completed Successfully!" + System.lineSeparator()+
+                "Activities Completed: "+ppc.getNumActivitiesCompleted()+", Activities Expired: "+ppc.getNumActivitiesExpired()+".");
+        reportProjectProgression.getChildren().add(projectProgressionLabel);
+        return reportProjectProgression;
+    }
 
+    private VBox getProgressBar(ProjectProgressionCalcutator ppc, Activity a){
         ProgressBar progressBar = new ProgressBar(0.0);
-        double progression = activity.getProject().getProgression();
+        double progression = ppc.getProgression();
 
         progressBar.setProgress(progression);
         String style;
         if (progression < 0.33) style = "-fx-accent: red;";
         else if (progression < 1.0) style = "-fx-accent: orange;";
         else style = "-fx-accent: green;";
-
-
         progressBar.setStyle(style);
-        Label progress = new Label("Project " + activity.getProject() + " Progress: " + progressBar.getProgress()*100 + "%");
+
+        Label progress = new Label("Project " + a.getProject() + " Progress: " + progressBar.getProgress()*100 + "%");
         progress.setStyle("-fx-font-size: 12px;");
         VBox progressBarLayout = new VBox(progressBar, progress);
         progressBarLayout.setSpacing(5);

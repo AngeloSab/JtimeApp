@@ -22,10 +22,6 @@ public class Project {
         return name;
     }
 
-    public boolean isCompleted() {
-        return completed;
-    }
-
     public List<Activity> getActivities() {
         return Collections.unmodifiableList(activities);
     }
@@ -40,44 +36,17 @@ public class Project {
         activities.add(activity);
     }
 
-    public boolean checkCompleted(){
-        for (Activity activity : activities){
-            if (!activity.isCompleted()) return false;
-        }
-        this.completed = true;
-        return true;
-    }
-
-    public int getNumActivitiesCompleted() {
-        int count = 0;
-        for (Activity activity : activities){
-            if (activity.isCompleted()) count++;
-        }
-        return count;
-    }
-
-    public int getNumActivitiesExpired(){
-        int count = 0;
-        for (Activity activity : activities){
-            if (activity.getStatus() == ActivityStatus.EXPIRED) count++;
-        }
-    return count;
-    }
-
-    public double getProgression() {
-        double count = 0;
-        for (Activity activity : this.getActivities()) {
-            if (activity.isCompleted()) count ++;
-        }
-        return count / (double) this.getActivities().size();
-    }
-
     public void removeActivity(Activity activity) {
         activities.remove(activity);
+    }
+
+    public void complete() {
+        completed = true;
     }
 
     @Override
     public String toString() {
         return name;
     }
+
 }

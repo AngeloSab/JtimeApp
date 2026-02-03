@@ -7,8 +7,8 @@ import javafx.stage.Stage;
 
 public class MainApp extends Application {
 
-    public final int WIDTH = 900;
-    public final int HEIGHT = 600;
+    public final int WIDTH = 1100;
+    public final int HEIGHT = 700;
     @Override
     public void start(Stage primaryStage) {
         MainAppFX mainGUI = new MainAppFX(); // container GUI
