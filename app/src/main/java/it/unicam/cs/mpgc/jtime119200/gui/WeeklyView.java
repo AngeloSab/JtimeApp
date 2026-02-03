@@ -1,7 +1,7 @@
 package it.unicam.cs.mpgc.jtime119200.gui;
 import it.unicam.cs.mpgc.jtime119200.Activity;
 import it.unicam.cs.mpgc.jtime119200.Day;
-import it.unicam.cs.mpgc.jtime119200.ProjectProgressionCalcutator;
+import it.unicam.cs.mpgc.jtime119200.projectProgressionCalcutator;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -155,7 +155,7 @@ public class WeeklyView extends BorderPane {
     }
 
     public void showReport(Activity activity) {
-        ProjectProgressionCalcutator ppc = new ProjectProgressionCalcutator(activity.getProject());
+        projectProgressionCalcutator ppc = new projectProgressionCalcutator(activity.getProject());
         reportBox.getChildren().clear();
         reportBox.setSpacing(20);
         reportBox.setAlignment(Pos.CENTER_LEFT);
@@ -188,7 +188,7 @@ public class WeeklyView extends BorderPane {
         reportBox.getChildren().addAll(progressBar, reportProject, exitButton);
     }
 
-    private VBox reportProjectProgression(ProjectProgressionCalcutator ppc, Activity activity) {
+    private VBox reportProjectProgression(projectProgressionCalcutator ppc, Activity activity) {
         VBox reportProjectProgression = new VBox();
         Label projectProgressionLabel = new Label("Congratulation! Project "+activity.getProject()+" Completed Successfully!" + System.lineSeparator()+
                 "Activities Completed: "+ppc.getNumActivitiesCompleted()+", Activities Expired: "+ppc.getNumActivitiesExpired()+".");
@@ -196,7 +196,7 @@ public class WeeklyView extends BorderPane {
         return reportProjectProgression;
     }
 
-    private VBox getProgressBar(ProjectProgressionCalcutator ppc, Activity a){
+    private VBox getProgressBar(projectProgressionCalcutator ppc, Activity a){
         ProgressBar progressBar = new ProgressBar(0.0);
         double progression = ppc.getProgression();
 
