@@ -89,21 +89,8 @@ public class Activity implements Comparable<Activity> {
             status = ActivityStatus.EXPIRED;
     }
 
-
     public Instant expectedEndTime() {
         return startTime.plus(expectedDuration);
-    }
-
-    public boolean overlaps(Activity other) {
-        return this.startTime.isBefore(other.expectedEndTime())
-                && other.getStartTime().isBefore(this.expectedEndTime());
-    }
-
-    public Duration estimationDifference() {
-        if (status == ActivityStatus.COMPLETED) {
-            return actualDuration.minus(expectedDuration);
-        }
-        throw new IllegalStateException();
     }
 
     @Override

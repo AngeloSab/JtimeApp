@@ -1,7 +1,8 @@
 package it.unicam.cs.mpgc.jtime119200.gui;
 import it.unicam.cs.mpgc.jtime119200.Activity;
+import it.unicam.cs.mpgc.jtime119200.ActivityTimeCalculator;
 import it.unicam.cs.mpgc.jtime119200.Day;
-import it.unicam.cs.mpgc.jtime119200.projectProgressionCalculator;
+import it.unicam.cs.mpgc.jtime119200.ProjectProgressionCalculator;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -24,6 +25,9 @@ public class WeeklyView extends BorderPane {
 
     private final GridPane weekGrid = new GridPane();
     private final HBox reportBox = new HBox(10);
+
+    private ActivityTimeCalculator activityCalculator;
+    private ProjectProgressionCalculator progressionCalculator;
 
 
     public WeeklyView(ActivityUIController controller, Consumer<LocalDate> onDaySelected) {
@@ -130,6 +134,7 @@ public class WeeklyView extends BorderPane {
                 Label completedActivityLabel = new Label(System.lineSeparator() + "Completed");
                 row.getChildren().add(completedActivityLabel);
             }
+            activityCalculator = new ActivityTimeCalculator(activity);
             Tooltip description = new Tooltip(activityDescription(activity));
             Tooltip.install(row, description);
             description.setShowDelay(new Duration(100));
@@ -155,7 +160,8 @@ public class WeeklyView extends BorderPane {
     }
 
     public void showReport(Activity activity) {
-        projectProgressionCalculator ppc = new projectProgressionCalculator(activity.getProject());
+        progressionCalculator = new ProjectProgressionCalculator(activity.getProject());
+        activityCalculator = new ActivityTimeCalculator(activity);
         reportBox.getChildren().clear();
         reportBox.setSpacing(20);
         reportBox.setAlignment(Pos.CENTER_LEFT);
@@ -168,14 +174,14 @@ public class WeeklyView extends BorderPane {
                 "Start Time: " + activity.getStartTime().atZone(ZoneId.of("UTC+1")).format(DateTimeFormatter.ofPattern("HH:mm")) + ";");
         Label activityInfo2 = new Label("Expected Duration: " + activity.getExpectedDuration().toMinutes() + " (in minutes);" +  System.lineSeparator() +
                 "Actual Duration: " + activity.getActualDuration().toMinutes() + " (in minutes);" +  System.lineSeparator() +
-                "Estimation Difference: " + activity.estimationDifference().toMinutes() + " (in minutes);");
+                "Estimation Difference: " + activityCalculator.estimationDifference().toMinutes() + " (in minutes);");
 
         reportBox.getChildren().addAll(activityInfo1, activityInfo2);
-        VBox progressBar = getProgressBar(ppc, activity);
+        VBox progressBar = getProgressBar(activity);
 
-        VBox reportProject = reportProjectProgression(ppc, activity);
+        VBox reportProject = reportProjectProgression(activity);
         reportProject.setAlignment(Pos.CENTER_LEFT);
-        reportProject.setVisible(ppc.checkCompleted());
+        reportProject.setVisible(progressionCalculator.checkCompleted());
 
 
         Button exitButton = new Button("Exit");
@@ -188,17 +194,21 @@ public class WeeklyView extends BorderPane {
         reportBox.getChildren().addAll(progressBar, reportProject, exitButton);
     }
 
-    private VBox reportProjectProgression(projectProgressionCalculator ppc, Activity activity) {
+    private VBox reportProjectProgression(Activity activity) {
+        progressionCalculator = new ProjectProgressionCalculator(activity.getProject());
         VBox reportProjectProgression = new VBox();
         Label projectProgressionLabel = new Label("Congratulation! Project "+activity.getProject()+" Completed Successfully!" + System.lineSeparator()+
-                "Activities Completed: "+ppc.getNumActivitiesCompleted()+", Activities Expired: "+ppc.getNumActivitiesExpired()+".");
+                "Activities Completed: "+progressionCalculator.getNumActivitiesCompleted()+", Activities Expired: "+progressionCalculator.getNumActivitiesExpired()+".");
         reportProjectProgression.getChildren().add(projectProgressionLabel);
         return reportProjectProgression;
     }
 
-    private VBox getProgressBar(projectProgressionCalculator ppc, Activity a){
+    private VBox getProgressBar(Activity a){
         ProgressBar progressBar = new ProgressBar(0.0);
-        double progression = ppc.getProgression();
+
+        progressionCalculator = new ProjectProgressionCalculator(a.getProject());
+
+        double progression = progressionCalculator.getProgression();
 
         progressBar.setProgress(progression);
         String style;
@@ -215,6 +225,7 @@ public class WeeklyView extends BorderPane {
         return progressBarLayout;
     }
     public String activityDescription(Activity activity) {
+        activityCalculator = new ActivityTimeCalculator(activity);
         return switch (activity.getStatus()) {
             case PLANNED ->
                     "Start Time " + activity.getStartTime().atZone(ZoneId.of("UTC+1")).format(DateTimeFormatter.ofPattern("HH:mm")) + System.lineSeparator() +
@@ -224,7 +235,7 @@ public class WeeklyView extends BorderPane {
                     "Started at " + activity.getStartTime().atZone(ZoneId.of("UTC+1")).format(DateTimeFormatter.ofPattern("HH:mm")) + System.lineSeparator() +
                             "Ended at " + activity.getActualEndTime().atZone(ZoneId.of("UTC+1")).format(DateTimeFormatter.ofPattern("HH:mm")) + System.lineSeparator() +
                             "Actual Duration " + activity.getActualDuration().toMinutes() + System.lineSeparator() +
-                            "Estimation difference: " + activity.estimationDifference().toMinutes();
+                            "Estimation difference: " + activityCalculator.estimationDifference().toMinutes();
         };
     }
 

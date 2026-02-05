@@ -12,7 +12,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class ActivityUIController {
@@ -135,7 +134,7 @@ public class ActivityUIController {
                 onCalendarChanged.run();
             }
         });
-        form.getChildren().addAll(activityCombo, saveBtn);
+        form.getChildren().addAll(title, activityCombo, saveBtn);
 
         return form;
     }

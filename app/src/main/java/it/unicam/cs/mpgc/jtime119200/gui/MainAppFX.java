@@ -44,7 +44,7 @@ public class MainAppFX {
 
         completeController.setOnActivityCompleted(weeklyView::showReport);
 
-        calendar.updateExpiredActivities();
+        calendar.updateExpiredAcitvities();
 
         writer.saveWrite(calendar);
 

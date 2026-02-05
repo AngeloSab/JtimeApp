@@ -80,8 +80,9 @@ public class JtimeCalendar {
     public Activity createActivity(Project project, String title, Duration expectedDuration, Instant startTime, LocalDate date) {
         Day day = getDay(date);
         Activity newActivity = new Activity(project, title, expectedDuration, startTime);
+        ActivityTimeCalculator atc = new ActivityTimeCalculator(newActivity);
         for (Activity a : day.getActivities()) {
-            if (newActivity.overlaps(a)) {
+            if (atc.overlaps(newActivity,a)) {
                 throw new ActivityOverlapException(
                         "Activity overlaps another activity in the same day"
                 );
@@ -110,7 +111,7 @@ public class JtimeCalendar {
      * Update the status of all the activities of all days before today,
      * setting the status on EXPIRED
      */
-    public void updateExpiredActivities() {
+    public void updateExpiredAcitvities() {
         for (Day day : days.values()) {
             if (day.getDate().isBefore(LocalDate.now())) {
                 for (Activity a : day.getActivities()) {

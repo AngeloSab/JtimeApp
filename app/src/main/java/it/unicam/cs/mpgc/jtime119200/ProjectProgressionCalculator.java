@@ -1,9 +1,9 @@
 package it.unicam.cs.mpgc.jtime119200;
 
-public class projectProgressionCalculator {
+public class ProjectProgressionCalculator {
     Project project;
 
-    public projectProgressionCalculator(Project project) {
+    public ProjectProgressionCalculator(Project project) {
         this.project = project;
     }
 
