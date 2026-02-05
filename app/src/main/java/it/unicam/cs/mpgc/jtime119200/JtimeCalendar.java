@@ -105,6 +105,22 @@ public class JtimeCalendar {
             day.removeActivity(activity);
         }
     }
+
+    /**
+     * Update the status of all the activities of all days before today,
+     * setting the status on EXPIRED
+     */
+    public void updateExpiredActivities() {
+        for (Day day : days.values()) {
+            if (day.getDate().isBefore(LocalDate.now())) {
+                for (Activity a : day.getActivities()) {
+                    if (a.getStatus() == ActivityStatus.PLANNED) {
+                        a.expire();
+                    }
+                }
+            }
+        }
+    }
 }
 
 

@@ -64,21 +64,12 @@ public class CalendarWriter {
                                         Element actEl = doc.createElement("Activity");
 
                                         actEl.setAttribute("title", activity.getTitle());
-                                        actEl.setAttribute("duration",
-                                                activity.getExpectedDuration().toString());
-                                        actEl.setAttribute("startTime",
-                                                activity.getStartTime().toString());
-                                        actEl.setAttribute("status",
-                                                activity.getStatus().toString());
-
-                                        if (activity.getProject() != null) {
-                                                actEl.setAttribute("project", activity.getProject().getName());
-                                        }
-
-                                        if (activity.getStatus() == ActivityStatus.COMPLETED &&
-                                                activity.getActualDuration() != null) {
-                                                actEl.setAttribute("actualDuration",
-                                                        activity.getActualDuration().toString());
+                                        actEl.setAttribute("duration", activity.getExpectedDuration().toString());
+                                        actEl.setAttribute("startTime", activity.getStartTime().toString());
+                                        actEl.setAttribute("status", activity.getStatus().toString());
+                                        actEl.setAttribute("project", activity.getProject().getName());
+                                        if (activity.getStatus() == ActivityStatus.COMPLETED) {
+                                                actEl.setAttribute("actualDuration", activity.getActualDuration().toString());
                                         }
 
                                         dayEl.appendChild(actEl);

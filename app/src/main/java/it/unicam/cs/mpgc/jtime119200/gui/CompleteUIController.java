@@ -1,7 +1,6 @@
 package it.unicam.cs.mpgc.jtime119200.gui;
 
 import it.unicam.cs.mpgc.jtime119200.Activity;
-import it.unicam.cs.mpgc.jtime119200.JtimeCalendar;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -19,7 +18,7 @@ public class CompleteUIController {
 
 
 
-    public CompleteUIController(JtimeCalendar calendar) {
+    public CompleteUIController() {
     }
 
     public Node checkStatus(Activity activity) {

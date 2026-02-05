@@ -2,10 +2,6 @@ package it.unicam.cs.mpgc.jtime119200;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
 import java.util.Objects;
 
 public class Activity implements Comparable<Activity> {
@@ -14,7 +10,6 @@ public class Activity implements Comparable<Activity> {
     private Project project;
     private  Duration expectedDuration;
     private Duration actualDuration;
-    private boolean completed;
     private  Instant startTime;
     private Instant actualEndTime;
     private ActivityStatus status;
@@ -54,6 +49,8 @@ public class Activity implements Comparable<Activity> {
         return actualDuration;
     }
 
+    public Instant getActualEndTime() {return actualEndTime;}
+
     public Instant getStartTime() {
         return startTime;
     }
@@ -63,8 +60,7 @@ public class Activity implements Comparable<Activity> {
     }
     // ----------setters-----------
 
-    public void setExpectedDuration(Duration expectedDuration) {
-        this.expectedDuration = expectedDuration;
+    public void setExpectedDuration(Duration expectedDuration) {this.expectedDuration = expectedDuration;
     }
 
     public void setStartTime(Instant startTime) {
@@ -75,9 +71,7 @@ public class Activity implements Comparable<Activity> {
         this.project = project;
     }
 
-    public void setStatus(ActivityStatus status) {
-        this.status = status;
-    }
+
 
 
     // ---------- behavior ----------
@@ -91,17 +85,8 @@ public class Activity implements Comparable<Activity> {
         this.status = ActivityStatus.COMPLETED;
     }
 
-    public void expire(){
-        this.setStatus(ActivityStatus.EXPIRED);
-    }
-
-    public void expireIfNeeded() {
-        if (status == ActivityStatus.PLANNED
-                && startTime.atZone(ZoneId.systemDefault())
-                .toLocalDate()
-                .isBefore(LocalDate.now())) {
+    public void expire() {
             status = ActivityStatus.EXPIRED;
-        }
     }
 
 
@@ -115,23 +100,11 @@ public class Activity implements Comparable<Activity> {
     }
 
     public Duration estimationDifference() {
-        if (!completed) {
-            return Duration.ZERO;
+        if (status == ActivityStatus.COMPLETED) {
+            return actualDuration.minus(expectedDuration);
         }
-        return actualDuration.minus(expectedDuration);
+        throw new IllegalStateException();
     }
-
-    public String activityDescription() {
-        if (this.completed) {
-            return "Started at " + this.getStartTime().atZone(ZoneId.of("UTC+1")).format(DateTimeFormatter.ofPattern("HH:mm")) + System.lineSeparator() +
-                    "Ended at " + this.actualEndTime.atZone(ZoneId.of("UTC+1")).format(DateTimeFormatter.ofPattern("HH:mm")) + System.lineSeparator() +
-                    "Actual Duration " + this.actualDuration.toMinutes() + System.lineSeparator() +
-                    "Estimation difference: " + estimationDifference().toMinutes();
-        } else
-            return "Start Time " + this.getStartTime().atZone(ZoneId.of("UTC+1")).format(DateTimeFormatter.ofPattern("HH:mm")) + System.lineSeparator() +
-                    "Expected End Time " + this.expectedEndTime().atZone(ZoneId.of("UTC+1")).format(DateTimeFormatter.ofPattern("HH:mm"));
-    }
-
 
     @Override
     public String toString() {

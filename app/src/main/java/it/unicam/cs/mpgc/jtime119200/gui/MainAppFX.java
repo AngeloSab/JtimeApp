@@ -26,7 +26,7 @@ public class MainAppFX {
         this.root = new BorderPane();
 
         this.controller = new ActivityUIController(calendar);
-        this.completeController = new CompleteUIController(calendar);
+        this.completeController = new CompleteUIController();
         completeController.setOnActivityCompleted(activity -> showWeeklyView());
 
         controller.setOnCalendarChanged(this::showWeeklyView);
@@ -34,6 +34,7 @@ public class MainAppFX {
 
         CalendarReader reader = new CalendarReader(xmlFile);
         reader.saveRead(calendar);
+
         showWeeklyView();
     }
 
@@ -43,7 +44,10 @@ public class MainAppFX {
 
         completeController.setOnActivityCompleted(weeklyView::showReport);
 
+        calendar.updateExpiredActivities();
+
         writer.saveWrite(calendar);
+
 
         root.setCenter(weeklyView);
     }

@@ -4,5 +4,6 @@ public enum ActivityStatus {
     PLANNED,
     COMPLETED,
     //IN_PROGRESS  for future
-    EXPIRED;
+    EXPIRED
+
 }

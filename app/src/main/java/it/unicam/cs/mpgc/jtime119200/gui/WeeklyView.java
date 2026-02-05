@@ -130,7 +130,7 @@ public class WeeklyView extends BorderPane {
                 Label completedActivityLabel = new Label(System.lineSeparator() + "Completed");
                 row.getChildren().add(completedActivityLabel);
             }
-            Tooltip description = new Tooltip(activity.activityDescription());
+            Tooltip description = new Tooltip(activityDescription(activity));
             Tooltip.install(row, description);
             description.setShowDelay(new Duration(100));
             description.setShowDuration(new Duration(10000));
@@ -214,4 +214,18 @@ public class WeeklyView extends BorderPane {
         progressBarLayout.setAlignment(Pos.CENTER_LEFT);
         return progressBarLayout;
     }
+    public String activityDescription(Activity activity) {
+        return switch (activity.getStatus()) {
+            case PLANNED ->
+                    "Start Time " + activity.getStartTime().atZone(ZoneId.of("UTC+1")).format(DateTimeFormatter.ofPattern("HH:mm")) + System.lineSeparator() +
+                            " Expected End Time " + activity.expectedEndTime().atZone(ZoneId.of("UTC+1")).format(DateTimeFormatter.ofPattern("HH:mm"));
+            case EXPIRED -> "Activity " + activity.getTitle() + ", Project: " + activity.getProject() + " expired";
+            case COMPLETED ->
+                    "Started at " + activity.getStartTime().atZone(ZoneId.of("UTC+1")).format(DateTimeFormatter.ofPattern("HH:mm")) + System.lineSeparator() +
+                            "Ended at " + activity.getActualEndTime().atZone(ZoneId.of("UTC+1")).format(DateTimeFormatter.ofPattern("HH:mm")) + System.lineSeparator() +
+                            "Actual Duration " + activity.getActualDuration().toMinutes() + System.lineSeparator() +
+                            "Estimation difference: " + activity.estimationDifference().toMinutes();
+        };
+    }
+
 }
