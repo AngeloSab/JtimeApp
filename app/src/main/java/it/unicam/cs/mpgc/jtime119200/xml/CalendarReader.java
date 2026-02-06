@@ -1,9 +1,9 @@
 package it.unicam.cs.mpgc.jtime119200.xml;
 
-import it.unicam.cs.mpgc.jtime119200.Activity;
-import it.unicam.cs.mpgc.jtime119200.ActivityStatus;
-import it.unicam.cs.mpgc.jtime119200.JtimeCalendar;
-import it.unicam.cs.mpgc.jtime119200.Project;
+import it.unicam.cs.mpgc.jtime119200.domain.Activity;
+import it.unicam.cs.mpgc.jtime119200.domain.ActivityStatus;
+import it.unicam.cs.mpgc.jtime119200.domain.JtimeCalendar;
+import it.unicam.cs.mpgc.jtime119200.domain.Project;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;

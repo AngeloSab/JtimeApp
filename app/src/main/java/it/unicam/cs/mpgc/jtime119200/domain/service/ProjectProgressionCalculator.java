@@ -1,4 +1,8 @@
-package it.unicam.cs.mpgc.jtime119200;
+package it.unicam.cs.mpgc.jtime119200.domain.service;
+
+import it.unicam.cs.mpgc.jtime119200.domain.Activity;
+import it.unicam.cs.mpgc.jtime119200.domain.ActivityStatus;
+import it.unicam.cs.mpgc.jtime119200.domain.Project;
 
 public class ProjectProgressionCalculator {
     Project project;

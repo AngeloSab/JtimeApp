@@ -1,4 +1,4 @@
-package it.unicam.cs.mpgc.jtime119200;
+package it.unicam.cs.mpgc.jtime119200.domain;
 
 import java.time.Duration;
 import java.time.Instant;

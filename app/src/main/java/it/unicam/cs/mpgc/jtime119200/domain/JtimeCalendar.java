@@ -1,4 +1,6 @@
-package it.unicam.cs.mpgc.jtime119200;
+package it.unicam.cs.mpgc.jtime119200.domain;
+
+import it.unicam.cs.mpgc.jtime119200.domain.service.ActivityTimeCalculator;
 
 import java.time.LocalDate;
 import java.time.Duration;
@@ -122,6 +124,7 @@ public class JtimeCalendar {
             }
         }
     }
+
 }
 
 
