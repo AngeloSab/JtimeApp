@@ -1,7 +1,5 @@
 package it.unicam.cs.mpgc.jtime119200.domain;
 
-import it.unicam.cs.mpgc.jtime119200.domain.service.ActivityTimeCalculator;
-
 import java.time.LocalDate;
 import java.time.Duration;
 import java.time.Instant;
@@ -36,6 +34,21 @@ public class JtimeCalendar {
         return days.computeIfAbsent(date, Day::new);
     }
 
+
+    /**
+     * Return the Day that contain the given Activity
+     *
+     * @param activity the activity we want to know the day
+     * @return the Day of the Activity
+     */
+    public Day getDay(Activity activity) {
+        Day dayOfActivity = null;
+        for (Day day : days.values()) {
+            if (day.getActivities().contains(activity)) dayOfActivity=day;
+        }
+        return dayOfActivity;
+    }
+
     /**
      * @return an unmodifiable collection of all {@link Day} instances
      */
@@ -53,10 +66,25 @@ public class JtimeCalendar {
      * @throws IllegalArgumentException if the project already exists
      */
     public void addProject(Project project) {
-        if (projects.contains(project)) {
-            throw new IllegalArgumentException("Project already exists");
-        }
+        if (projects.contains(project)) return;
         projects.add(project);
+    }
+
+    /**
+     * Adds the given project in a string format to the calendar, and return that;
+     * if the project already exist, return that.
+     *
+     * @param projectName the project name (string format) to add
+     */
+    public Project createProject(String projectName) {
+        for (Project p : projects) {
+            if (p.getName().equals(projectName)) {
+                return p;
+            }
+        }
+        Project newProject = new Project(projectName);
+        projects.add(newProject);
+        return newProject;
     }
 
     /**
@@ -81,10 +109,9 @@ public class JtimeCalendar {
      */
     public Activity createActivity(Project project, String title, Duration expectedDuration, Instant startTime, LocalDate date) {
         Day day = getDay(date);
-        Activity newActivity = new Activity(project, title, expectedDuration, startTime);
-        ActivityTimeCalculator atc = new ActivityTimeCalculator(newActivity);
+        Activity newActivity = new Activity(project, title, expectedDuration, startTime, date);
         for (Activity a : day.getActivities()) {
-            if (atc.overlaps(newActivity,a)) {
+            if (a.overlaps(newActivity)) {
                 throw new ActivityOverlapException(
                         "Activity overlaps another activity in the same day"
                 );
@@ -102,18 +129,24 @@ public class JtimeCalendar {
      * @param activity the activity to remove
      */
 
+
     public void removeActivity(Project project, Activity activity) {
         project.removeActivity(activity);
-        for (Day day : days.values()) {
+        Day day = days.get(activity.getDate());
             day.removeActivity(activity);
-        }
+    }
+
+    public void editActivity(Activity activity, Project project, Duration expectedDuration, Instant startTime) {
+        activity.setProject(project);
+        activity.setStartTime(startTime);
+        activity.setExpectedDuration(expectedDuration);
     }
 
     /**
      * Update the status of all the activities of all days before today,
      * setting the status on EXPIRED
      */
-    public void updateExpiredAcitvities() {
+    public void updateExpiredActivities() {
         for (Day day : days.values()) {
             if (day.getDate().isBefore(LocalDate.now())) {
                 for (Activity a : day.getActivities()) {

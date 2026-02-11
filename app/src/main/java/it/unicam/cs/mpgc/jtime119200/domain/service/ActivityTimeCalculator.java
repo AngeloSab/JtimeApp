@@ -4,6 +4,7 @@ import it.unicam.cs.mpgc.jtime119200.domain.Activity;
 import it.unicam.cs.mpgc.jtime119200.domain.ActivityStatus;
 
 import java.time.Duration;
+import java.time.Instant;
 
 public class ActivityTimeCalculator {
 
@@ -21,9 +22,10 @@ public class ActivityTimeCalculator {
                 .minus(activity.getExpectedDuration());
     }
 
-    public boolean overlaps(Activity a1, Activity a2) {
-        return a1.getStartTime().isBefore(a2.expectedEndTime())
-                && a2.getStartTime().isBefore(a1.expectedEndTime());
-    }
+
+
+
+
+
 
 }

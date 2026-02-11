@@ -1,82 +1,150 @@
 package it.unicam.cs.mpgc.jtime119200.gui;
 
+import it.unicam.cs.mpgc.jtime119200.application.ActivityFormMode;
 import it.unicam.cs.mpgc.jtime119200.domain.Activity;
-import it.unicam.cs.mpgc.jtime119200.domain.Project;
-import it.unicam.cs.mpgc.jtime119200.model.ActivityFormViewModel;
-import it.unicam.cs.mpgc.jtime119200.gui.contract.ActivityHandler;
+import it.unicam.cs.mpgc.jtime119200.model.ActivityFormModel;
+import it.unicam.cs.mpgc.jtime119200.model.ActivityViewModel;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
-import javafx.stage.Modality;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDate;
+import java.time.*;
 
 public class ActivityFormView {
 
-    private final ActivityFormViewModel viewModel;
-    private final ActivityHandler handler;
+    private final Stage stage;
+    private final ActivityFormModel controller;
+    private final LocalDate day;
 
-    public ActivityFormView(ActivityFormViewModel viewModel, ActivityHandler handler) {
-        this.viewModel = viewModel;
-        this.handler = handler;
+    private TextField projectField;
+    private TextField titleField;
+    private TextField startTimeField;
+    private TextField durationField;
+
+    public ActivityFormView(Stage stage,
+                            ActivityFormModel controller,
+                            LocalDate day) {
+        this.stage = stage;
+        this.controller = controller;
+        this.day = day;
+
+        stage.setTitle(getTitle());
+        stage.setScene(new Scene(createRoot(), 400, 350));
+        stage.show();
     }
 
-    public void show(LocalDate date) {
-        Stage stage = new Stage();
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.setTitle("Add New Activity");
+    private String getTitle() {
+        return controller.getMode() == ActivityFormMode.CREATE
+                ? "Create new Activity"
+                : "Edit Activity";
+    }
 
-        GridPane grid = new GridPane();
-        grid.setPadding(new Insets(10));
-        grid.setVgap(5);
-        grid.setHgap(5);
+    private Parent createRoot() {
+        VBox root = new VBox(10);
+        root.setPadding(new Insets(15));
+        root.setAlignment(Pos.CENTER);
 
-        // Title
-        TextField titleField = new TextField();
-        grid.add(new Label("Title:"), 0, 0);
-        grid.add(titleField, 1, 0);
+        projectField = new TextField();
+        projectField.setPromptText("Project");
 
-        // Project
-        ComboBox<Project> projectCombo = new ComboBox<>();
-        projectCombo.getItems().addAll(viewModel.getAllProjects());
-        grid.add(new Label("Project:"), 0, 1);
-        grid.add(projectCombo, 1, 1);
+        titleField = new TextField();
+        titleField.setPromptText("Title");
 
-        // Expected Duration (in minutes)
-        TextField durationField = new TextField();
-        grid.add(new Label("Duration (min):"), 0, 2);
-        grid.add(durationField, 1, 2);
+        startTimeField = new TextField();
+        startTimeField.setPromptText("Start time (HH:mm)");
 
-        // Start Time (hour:minute)
-        TextField startTimeField = new TextField();
-        grid.add(new Label("Start Time (HH:mm):"), 0, 3);
-        grid.add(startTimeField, 1, 3);
+        durationField = new TextField();
+        durationField.setPromptText("Expected duration (minutes)");
 
-        Button submit = new Button("Create");
-        grid.add(submit, 1, 4);
+        if (controller.getMode() == ActivityFormMode.EDIT) {
+            preloadFields();
+        }
 
-        submit.setOnAction(e -> {
-            try {
-                String title = titleField.getText();
-                Project project = projectCombo.getValue();
-                Duration duration = Duration.ofMinutes(Long.parseLong(durationField.getText()));
-                String[] parts = startTimeField.getText().split(":");
-                Instant startTime = date.atTime(Integer.parseInt(parts[0]), Integer.parseInt(parts[1])).atZone(java.time.ZoneId.systemDefault()).toInstant();
+        root.getChildren().addAll(
+                new Label("Project"),
+                projectField,
+                new Label("Title"),
+                titleField,
+                new Label("Start time"),
+                startTimeField,
+                new Label("Duration"),
+                durationField,
+                createButtons()
+        );
 
-                Activity activity = viewModel.buildActivity(project, title, duration, startTime, date);
-                handler.handle(activity);
-                stage.close();
-            } catch (Exception ex) {
-                Alert alert = new Alert(Alert.AlertType.ERROR, "Invalid input: " + ex.getMessage());
-                alert.showAndWait();
+        return root;
+    }
+
+    private void preloadFields() {
+        ActivityViewModel activityVM = controller.getActivityToEdit();
+
+        projectField.setText(activityVM.getProjectName());
+        titleField.setText(activityVM.getTitle());
+        startTimeField.setText(activityVM.getStartTimeAsString());
+        durationField.setText(activityVM.getExpectedDurationMinutes());
+    }
+
+    private HBox createButtons() {
+        Button submit = new Button(
+                controller.getMode() == ActivityFormMode.CREATE
+                        ? "Create"
+                        : "Save"
+        );
+
+        submit.setOnAction(e -> onSubmit());
+
+        Button cancel = new Button("Cancel");
+        cancel.setOnAction(e -> stage.close());
+
+        HBox box = new HBox(10, submit, cancel);
+        box.setAlignment(Pos.CENTER);
+        return box;
+    }
+
+    private void onSubmit() {
+        try {
+            String project = projectField.getText();
+            String title = titleField.getText();
+
+            if (project.isBlank() || title.isBlank()) {
+                throw new IllegalArgumentException("Project and title cannot be empty");
             }
-        });
 
-        stage.setScene(new Scene(grid));
-        stage.showAndWait();
+            Duration duration = Duration.ofMinutes(
+                    Long.parseLong(durationField.getText())
+            );
+
+            Instant startTime = parseStartTime();
+
+            controller.submit(project, title, duration, startTime);
+            stage.close();
+
+        } catch (Exception ex) {
+            showError(ex.getMessage());
+        }
+    }
+
+    private Instant parseStartTime() {
+        LocalTime time = LocalTime.parse(startTimeField.getText());
+
+        ZonedDateTime zdt = ZonedDateTime.of(
+                day,
+                time,
+                ZoneId.of("UTC+1")
+        );
+
+        return zdt.toInstant();
+    }
+
+    private void showError(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setHeaderText("Invalid data");
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }

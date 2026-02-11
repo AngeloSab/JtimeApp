@@ -1,0 +1,35 @@
+package it.unicam.cs.mpgc.jtime119200.application;
+
+import it.unicam.cs.mpgc.jtime119200.domain.JtimeCalendar;
+import it.unicam.cs.mpgc.jtime119200.gui.ActivityFormView;
+import it.unicam.cs.mpgc.jtime119200.model.ActivityFormModel;
+import it.unicam.cs.mpgc.jtime119200.model.ActivityViewModel;
+import it.unicam.cs.mpgc.jtime119200.model.WeeklyViewModel;
+import javafx.stage.Stage;
+
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDate;
+
+public class EditActivityController {
+
+    private final WeeklyViewModel weeklyViewModel;
+    private final ActivityViewModel activityViewModel;
+    private final JtimeCalendar calendar;
+
+    public EditActivityController(WeeklyViewModel weeklyViewModel, ActivityViewModel activity, LocalDate date) {
+        this.weeklyViewModel = weeklyViewModel;
+        this.activityViewModel = activity;
+        this.calendar = weeklyViewModel.getCalendar();
+    }
+
+    public void editActivity(String project, Duration expectedDuration, Instant startTime) {
+        calendar.editActivity(activityViewModel.getActivity(), calendar.createProject(project), expectedDuration, startTime);
+        weeklyViewModel.notifyListeners();
+    }
+
+    public void editActivitySignal() {
+        ActivityFormModel afm = new ActivityFormModel(weeklyViewModel, activityViewModel, activityViewModel.getDate());
+        ActivityFormView afv = new ActivityFormView(new Stage() , afm, activityViewModel.getDate());
+    }
+}

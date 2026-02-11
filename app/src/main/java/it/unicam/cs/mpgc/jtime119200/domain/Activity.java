@@ -2,6 +2,7 @@ package it.unicam.cs.mpgc.jtime119200.domain;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Objects;
 
 public class Activity implements Comparable<Activity> {
@@ -9,21 +10,22 @@ public class Activity implements Comparable<Activity> {
     private final String title;
     private Project project;
     private  Duration expectedDuration;
-    private Duration actualDuration;
     private  Instant startTime;
+    private LocalDate date;
+
+    private Duration actualDuration;
     private Instant actualEndTime;
     private ActivityStatus status;
 
 
-    public Activity(Project project,
-                    String title,
-                    Duration expectedDuration,
-                    Instant startTime) {
+    public Activity(Project project, String title, Duration expectedDuration, Instant startTime, LocalDate date) {
 
         this.project = Objects.requireNonNull(project);
         this.title = Objects.requireNonNull(title);
         this.expectedDuration = Objects.requireNonNull(expectedDuration);
         this.startTime = Objects.requireNonNull(startTime);
+        this.date = date;
+
         this.status = ActivityStatus.PLANNED;
     }
 
@@ -58,12 +60,17 @@ public class Activity implements Comparable<Activity> {
     public boolean isCompleted() {
         return (status == ActivityStatus.COMPLETED);
     }
+
+    public LocalDate getDate() {
+        return date;
+    }
     // ----------setters-----------
 
     public void setExpectedDuration(Duration expectedDuration) {this.expectedDuration = expectedDuration;
     }
 
     public void setStartTime(Instant startTime) {
+
         this.startTime = startTime;
     }
 
@@ -71,8 +78,9 @@ public class Activity implements Comparable<Activity> {
         this.project = project;
     }
 
-
-
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
 
     // ---------- behavior ----------
 
@@ -85,12 +93,17 @@ public class Activity implements Comparable<Activity> {
         this.status = ActivityStatus.COMPLETED;
     }
 
-    public void expire() {
-            status = ActivityStatus.EXPIRED;
+    public Instant expectedEndTime() {
+        return this.getStartTime().plus(this.getExpectedDuration());
     }
 
-    public Instant expectedEndTime() {
-        return startTime.plus(expectedDuration);
+    public boolean overlaps(Activity other) {
+        return this.getStartTime().isBefore(other.expectedEndTime())
+                && other.getStartTime().isBefore(this.expectedEndTime());
+    }
+
+    public void expire() {
+            status = ActivityStatus.EXPIRED;
     }
 
     @Override

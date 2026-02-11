@@ -2,46 +2,74 @@ package it.unicam.cs.mpgc.jtime119200.model;
 
 import it.unicam.cs.mpgc.jtime119200.domain.Day;
 import it.unicam.cs.mpgc.jtime119200.domain.JtimeCalendar;
-import it.unicam.cs.mpgc.jtime119200.domain.service.ActivityTimeCalculator;
 import it.unicam.cs.mpgc.jtime119200.domain.service.WeekPeriodConstructor;
-import javafx.scene.control.Label;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
+/**
+ * View model for a weekly calendar view.
+ */
 public class WeeklyViewModel {
 
-    private  final int offset;
-    private final List<DailyViewModel> days = new ArrayList<>();
+    private final JtimeCalendar calendar;
+    private final int weekOffset;
+    List<DailyViewModel> days;
 
-    public WeeklyViewModel(JtimeCalendar calendar, int offset) {
-        this.offset = offset;
-        WeekPeriodConstructor wpc = new WeekPeriodConstructor(offset);
+    private final List<Runnable> listeners = new ArrayList<>();
+
+
+    public WeeklyViewModel(JtimeCalendar calendar, int weekOffset) {
+        this.calendar = Objects.requireNonNull(calendar);
+        this.weekOffset = weekOffset;
+        days = new ArrayList<>();
+        buildWeeklyView();
+    }
+
+    public void buildWeeklyView() {
+        days = new ArrayList<>();
+        WeekPeriodConstructor wpc = new WeekPeriodConstructor(weekOffset);
         for (LocalDate date : wpc.getDays()) {
             Day day = calendar.getDay(date);
-            List<ActivityViewModel> activityVMs = day.getActivities().stream().sorted()
-                    .map(a -> new ActivityViewModel(a, new ActivityTimeCalculator(a))).toList();
+            List<ActivityViewModel> activityVMs = day.getActivities().stream()
+                    .sorted()
+                    .map(ActivityViewModel::new)
+                    .toList();
             days.add(new DailyViewModel(date, activityVMs));
         }
     }
 
-    public WeeklyViewModel nextWeek(JtimeCalendar calendar) {
-        return new WeeklyViewModel(calendar, this.offset + 1);
+    public void reloadWeek() {
+        buildWeeklyView();
+        notifyListeners();
     }
 
-    public WeeklyViewModel previousWeek(JtimeCalendar calendar) {
-        return new WeeklyViewModel(calendar, this.offset - 1);
+    public void addListener(Runnable listener) {
+        listeners.add(listener);
+    }
+
+    public void notifyListeners() {
+        listeners.forEach(Runnable::run);
+    }
+
+    public JtimeCalendar getCalendar() {
+        return calendar;
+    }
+
+    public LocalDate getWeekStart() {
+        return days.getFirst().getDate();
+    }
+
+    public LocalDate getWeekEnd() {
+        return days.getLast().getDate();
     }
 
     public List<DailyViewModel> getDays() {
-        return days;
+        return this.days;
     }
 
-    public String getWeekLabel(){
-        return "Week: "+ days.getFirst().getDate().toString() +" - "+days.getLast().getDate().toString();
+    public String getWeekLabel() {
+        return "Week " + getWeekStart() + " - " + getWeekEnd();
     }
-
-
-
 }

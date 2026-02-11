@@ -12,7 +12,7 @@ public class Project {
     private final List<Activity> activities = new ArrayList<>();
 
     public Project(String name) {
-        this.name = Objects.requireNonNull(name);
+        this.name = name;
         this.completed = false;
     }
 
@@ -45,8 +45,28 @@ public class Project {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false; // null o classi diverse
+
+        Project other = (Project) obj;
+
+        if (name == null) {
+            return other.name == null;
+        } else {
+            return name.equals(other.name);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        // Usa hashCode di projectName o 0 se null
+        return name != null ? name.hashCode() : 0;
+    }
+
+
+    @Override
     public String toString() {
         return name;
     }
-
 }
