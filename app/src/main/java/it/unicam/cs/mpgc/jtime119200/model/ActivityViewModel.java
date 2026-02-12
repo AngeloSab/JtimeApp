@@ -21,10 +21,6 @@ public class ActivityViewModel {
         calculator = new ActivityTimeCalculator(activity);
     }
 
-    public String getTitle() {
-        return activity.getTitle();
-    }
-
     public String getProject(){
         return activity.getProject().toString();
     }
@@ -44,13 +40,13 @@ public class ActivityViewModel {
             case EXPIRED -> "Activity expired";
         };
     }
+    public String getDescription(){
+        return "Activity: " + activity.getTitle() +
+                "\nProject: " + activity.getProject().toString();
+    }
 
-    public String getBorderStyle() {
-        return switch (activity.getStatus()) {
-            case PLANNED -> "-fx-border-color: blue;";
-            case COMPLETED -> "-fx-border-color: red;";
-            case EXPIRED -> "-fx-border-color: gray;";
-        };
+    public String getTitle(){
+        return activity.getTitle();
     }
 
     public boolean isClickable() {

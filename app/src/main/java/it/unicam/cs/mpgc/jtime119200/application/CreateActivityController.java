@@ -1,9 +1,8 @@
 package it.unicam.cs.mpgc.jtime119200.application;
 
 import it.unicam.cs.mpgc.jtime119200.domain.JtimeCalendar;
-import it.unicam.cs.mpgc.jtime119200.gui.ActivityFormView;
-import it.unicam.cs.mpgc.jtime119200.model.ActivityFormModel;
-import it.unicam.cs.mpgc.jtime119200.model.ActivityViewModel;
+import it.unicam.cs.mpgc.jtime119200.gui.form.CreateAndEditActivityForm;
+import it.unicam.cs.mpgc.jtime119200.model.form.CreateAndEditActivityFormModel;
 import it.unicam.cs.mpgc.jtime119200.model.WeeklyViewModel;
 import javafx.stage.Stage;
 
@@ -24,8 +23,8 @@ public class CreateActivityController {
     }
 
     public void createActivitySignal() {
-        ActivityFormModel afm = new ActivityFormModel(weeklyViewModel, day);
-        ActivityFormView afv = new ActivityFormView(new Stage() , afm, day);
+        CreateAndEditActivityFormModel afm = new CreateAndEditActivityFormModel(weeklyViewModel, day);
+        new CreateAndEditActivityForm(afm, day);
     }
 
     public void createActivity(String projectName, String title, Duration expectedDuration, Instant startTime, LocalDate day) {

@@ -1,13 +1,10 @@
 package it.unicam.cs.mpgc.jtime119200.gui;
 
-import it.unicam.cs.mpgc.jtime119200.application.CreateActivityController;
 import it.unicam.cs.mpgc.jtime119200.model.ActivityViewModel;
 import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuButton;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.Tooltip;
-import javafx.scene.layout.Priority;
+import javafx.geometry.Side;
+import javafx.scene.control.*;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
@@ -16,53 +13,73 @@ import java.util.function.Consumer;
 /**
  * Small card-like component used to display an activity in the day column.
  */
-public class ActivityView extends VBox {
+public class ActivityView extends StackPane {
 
     private final ActivityViewModel viewModel;
-    Consumer<ActivityViewModel> onEdit;
+    private final Consumer<ActivityViewModel> onEdit;
+    private final Consumer<ActivityViewModel> onRemove;
+    Tooltip actTip;
 
-    public ActivityView(ActivityViewModel viewModel, Consumer<ActivityViewModel> onEdit) {
-        this.onEdit = onEdit;
+    public ActivityView(ActivityViewModel viewModel,
+                        Consumer<ActivityViewModel> onEdit,
+                        Consumer<ActivityViewModel> onRemove) {
+
         this.viewModel = viewModel;
+        this.onEdit = onEdit;
+        this.onRemove = onRemove;
 
-        this.setMinHeight(95);
-        this.setSpacing(5);
-        this.setAlignment(Pos.CENTER);
-        this.setStyle(viewModel.getBorderStyle());
-        this.setMaxHeight(Double.MAX_VALUE);
-        Tooltip actTip = new Tooltip(viewModel.getTooltipText());
-        actTip.setShowDelay(new Duration(500));
-        actTip.setHideDelay(new Duration(1));
+        this.getStyleClass().add("activityView");
+        applyActivityStyle();
 
+        actTip = new Tooltip(viewModel.getTooltipText());
+        actTip.setShowDelay(new Duration(250));
         Tooltip.install(this, actTip);
-        Label title = new Label(viewModel.getTitle() + " - (" + viewModel.getProject()+")");
-        MenuButton options = createTripleDot();
 
-        this.getChildren().addAll(title, options);
+        VBox content = new VBox();
+        content.setFillWidth(true);
+
+        Label title = new Label(viewModel.getDescription());
+        title.getStyleClass().add("activity-title");
+
+        content.getChildren().add(title);
+
+        Button tripleDot = createTripleDot();
+
+        StackPane.setAlignment(tripleDot, Pos.TOP_RIGHT);
+
+        this.getChildren().addAll(content, tripleDot);
     }
 
-    private MenuButton createTripleDot() {
-        MenuButton optionsButton = new MenuButton("⋮");
-        optionsButton.setFocusTraversable(false);
 
-        optionsButton.setStyle("""
-        -fx-background-color: transparent;
-        -fx-font-size: 16;
-        -fx-padding: 0;
-    """);
+    private Button createTripleDot() {
+
+        Button tripleDot = new Button("⋮");
+        tripleDot.getStyleClass().add("activityView-tripleDot");
 
         MenuItem editItem = new MenuItem("Edit Activity");
-        if (viewModel.isClickable()) {
-            editItem.setOnAction(event -> {onEdit.accept(viewModel); });
-        }
+        if (viewModel.isClickable())
+            editItem.setOnAction(event -> onEdit.accept(viewModel));
+
         MenuItem removeItem = new MenuItem("Remove Activity");
-        removeItem.setStyle("-fx-text-fill: red;");
+        if (viewModel.isClickable())
+            removeItem.setOnAction(event -> onRemove.accept(viewModel));
 
-        optionsButton.getItems().addAll(editItem, removeItem);
+        removeItem.getStyleClass().add("activity-remove-item");
 
-        optionsButton.getStyleClass().add("no-arrow");
+        ContextMenu contextMenu = new ContextMenu(editItem, removeItem);
 
-        return optionsButton;
+        tripleDot.setOnAction(e ->
+                contextMenu.show(tripleDot, Side.BOTTOM, 0, 0));
+
+        return tripleDot;
     }
 
+
+    private void applyActivityStyle() {
+        switch (viewModel.getActivity().getStatus()) {
+            case PLANNED -> this.getStyleClass().add("activityView-planned");
+            case COMPLETED -> this.getStyleClass().add("activityView-completed");
+            case EXPIRED -> this.getStyleClass().add("activityView-expired");
+        }
+    }
 }

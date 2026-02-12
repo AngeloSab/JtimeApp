@@ -1,0 +1,107 @@
+/* ===== GLOBAL ===== */
+
+.root {
+    -fx-font-family: "Segoe UI", "Roboto", sans-serif;
+    -fx-background-color: white;
+}
+
+
+/* ===== WEEK HEADER ===== */
+
+.weeklyView-top {
+    -fx-padding: 10;
+    -fx-background-color: rgba(0, 186, 253, 0.15);
+    -fx-border-color: black;
+    -fx-border-width: 2;
+}
+
+.weeklyView-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: black;
+}
+
+.weeklyView-prevWeek,
+.weeklyView-nextWeek {
+    -fx-background-color: white;
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
+    -fx-padding: 20;
+}
+
+.weeklyView-prevWeek:hover,
+.weeklyView-nextWeek:hover {
+    -fx-background-color: grey;
+}
+
+/* ===== DAY COLUMN ===== */
+
+.dailyView {
+    -fx-pref-width: 170;
+    -fx-min-width: 150;
+    -fx-spacing: 0;
+}
+
+.dailyView-header {
+    -fx-pref-height: 60;
+    -fx-min-height: 60;
+    -fx-alignment: center;
+    -fx-border-width: 0 0 1 0;
+}
+
+.dailyView-activities {
+    -fx-padding: 8;
+    -fx-spacing: 8;
+}
+
+.dailyView-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+
+/* ====== ACTIVITY ======== */
+
+/* ===== ACTIVITY ROOT ===== */
+
+.activityView {
+    -fx-pref-height: 80;
+    -fx-padding: 8;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+}
+
+.activityView-planned {
+    -fx-background-color: white;
+    -fx-border-color: green;
+    -fx-border-width: 0 0 0 4;
+}
+
+.activityView-completed {
+    -fx-background-color: white;
+    -fx-border-color: red;
+    -fx-border-width: 0 0 0 4;
+}
+
+.activityView-expired {
+    -fx-background-color: white;
+    -fx-border-color: grey;
+    -fx-border-width: 0 0 0 4;
+}
+
+.activity-title {
+    -fx-font-weight: bold;
+}
+
+.activityView-tripleDot {
+    -fx-background-color: transparent;
+    -fx-font-size: 16px;
+    -fx-padding: 2 6 2 6;
+    -fx-cursor: hand;
+}
+
+.activityView-tripleDot:hover {
+    -fx-background-color: rgba(0,0,0,0.08);
+    -fx-background-radius: 6;
+}
+

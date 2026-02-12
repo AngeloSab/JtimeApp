@@ -2,7 +2,6 @@ package it.unicam.cs.mpgc.jtime119200.gui;
 
 import it.unicam.cs.mpgc.jtime119200.model.ActivityViewModel;
 import it.unicam.cs.mpgc.jtime119200.model.DailyViewModel;
-import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tooltip;
@@ -12,66 +11,66 @@ import javafx.scene.layout.VBox;
 import java.time.LocalDate;
 import java.util.function.Consumer;
 
-/**
- * Column that renders a single day header and its activities.
- */
 public class DailyView extends VBox {
-
     private final DailyViewModel viewModel;
     private final Consumer<LocalDate> onDayHeaderClicked;
 
+
+
     public DailyView(DailyViewModel viewModel,
-                     Consumer<ActivityViewModel> onActivitySelected,
+                     Consumer<ActivityViewModel> onRemove,
+                     Consumer<ActivityViewModel> onEdit,
                      Consumer<LocalDate> onDayHeaderClicked) {
+
         this.viewModel = viewModel;
         this.onDayHeaderClicked = onDayHeaderClicked;
 
-        VBox column = createDayHeader();
-        VBox activities = new VBox(3);
-        for (ActivityViewModel avm : viewModel.getActivities()){
-            VBox activity = new VBox(5);
-            activity.setAlignment(Pos.BASELINE_CENTER);
-            activity.setStyle("-fx-border-color: black;");
-            ActivityView avView = new ActivityView(avm, onActivitySelected);
-            activity.getChildren().add(avView);
-            avView.setOnMouseClicked( e -> onActivitySelected.accept(avm));
+        this.getStyleClass().add("dailyView");
+        this.setSpacing(0);
+        this.setFillWidth(true);
+
+        // HEADER
+        VBox header = createDayHeader();
+
+        // ACTIVITIES BOX
+        VBox activities = new VBox(8);
+        activities.getStyleClass().add("dailyView-activities");
+
+        for (ActivityViewModel avm : viewModel.getActivities()) {
+            ActivityView avView = new ActivityView(avm, onEdit, onRemove);
             activities.getChildren().add(avView);
         }
 
+        // SCROLL
         ScrollPane scroll = new ScrollPane(activities);
         scroll.setFitToWidth(true);
-        scroll.setFitToHeight(true);
+        scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
         VBox.setVgrow(scroll, Priority.ALWAYS);
 
-        column.getChildren().addAll(activities);
-        this.getChildren().add(column);
+        this.getChildren().addAll(header, scroll);
     }
+
+
 
     private VBox createDayHeader() {
-        VBox column = new VBox(5);
-        column.setAlignment(Pos.TOP_CENTER);
-        column.setPrefWidth(150);
-        column.setPrefHeight(680);
-        column.setMaxHeight(Double.MAX_VALUE);
-        column.setMaxWidth(Double.MAX_VALUE);
-        column.setStyle("-fx-border-color: black;");
 
         VBox header = new VBox();
-        header.setAlignment(Pos.CENTER);
-        header.setMinHeight(80);
-        header.setPrefHeight(80);
-        header.setMaxWidth(Double.MAX_VALUE);
-        header.setStyle("-fx-border-color: black;");
+        header.getStyleClass().add("dailyView-header");
 
-        Label dayLabel = new Label(viewModel.getDateLabel());
-        dayLabel.setStyle("-fx-font-weight: bold;");
+        Label dailyViewTitle = new Label(viewModel.getDateLabel());
+        dailyViewTitle.getStyleClass().add("dailyView-title");
 
-        header.setOnMouseClicked(e -> onDayHeaderClicked.accept(viewModel.getDate()));
-        Tooltip.install(header, new Tooltip("Click to create a new Activity"));
+        header.getChildren().add(dailyViewTitle);
+        if (!viewModel.getDate().isBefore(LocalDate.now())) {
+            header.setOnMouseClicked(e ->
+                    onDayHeaderClicked.accept(viewModel.getDate())
+            );
 
-        header.getChildren().add(dayLabel);
-        column.getChildren().add(header);
-        return column;
+            Tooltip.install(header, new Tooltip(viewModel.tooltipString()));
+        }
+        return header;
     }
+
 }

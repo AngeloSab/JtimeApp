@@ -22,6 +22,10 @@ public class DailyViewModel {
         return date;
     }
 
+    public String tooltipString() {
+        return "Click to create a new Activity";
+    }
+
     public List<ActivityViewModel> getActivities() {
         return activities;
     }

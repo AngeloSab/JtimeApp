@@ -4,14 +4,12 @@ package it.unicam.cs.mpgc.jtime119200.gui;
 import it.unicam.cs.mpgc.jtime119200.model.ActivityViewModel;
 import it.unicam.cs.mpgc.jtime119200.model.DailyViewModel;
 import it.unicam.cs.mpgc.jtime119200.model.WeeklyViewModel;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
+import javafx.scene.layout.*;
 
 import java.time.LocalDate;
 import java.util.function.Consumer;
@@ -22,19 +20,23 @@ import java.util.function.Consumer;
 public class WeeklyView extends BorderPane {
 
     private WeeklyViewModel viewModel;
-    private final Consumer<ActivityViewModel> onActivitySelected;
+    private final Consumer<ActivityViewModel> onEdit;
+    private final Consumer<ActivityViewModel> onRemove;
     private final Consumer<LocalDate> onDayHeaderClicked;
     private final Runnable onPrevWeek;
     private final Runnable onNextWeek;
+    private Label title;
 
 
     public WeeklyView(WeeklyViewModel viewModel,
-                      Consumer<ActivityViewModel> onActivitySelected,
+                      Consumer<ActivityViewModel> onEdit,
+                      Consumer<ActivityViewModel> onRemove,
                       Consumer<LocalDate> onDayHeaderClicked,
                       Runnable onPrevWeek,
                       Runnable onNextWeek) {
         this.viewModel = viewModel;
-        this.onActivitySelected = onActivitySelected;
+        this.onEdit = onEdit;
+        this.onRemove = onRemove;
         this.onDayHeaderClicked = onDayHeaderClicked;
         this.onPrevWeek = onPrevWeek;
         this.onNextWeek = onNextWeek;
@@ -42,31 +44,42 @@ public class WeeklyView extends BorderPane {
         this.setCenter(createCenter(viewModel));
     }
 
-    public HBox createTop() {
-        HBox top = new HBox();
-        top.setAlignment(Pos.CENTER);
-        top.setMinHeight(60);
-        top.setPadding(new Insets(10));
+    public GridPane createTop() {
+        GridPane top = new GridPane();
+        top.getStyleClass().add("weeklyView-top");
 
-        Button prevWeek = new Button("Previous Week");
+        ColumnConstraints column1 = new ColumnConstraints();
+        column1.setPercentWidth(33.33);
+        column1.setHalignment(HPos.CENTER);
+
+        ColumnConstraints column2 = new ColumnConstraints();
+        column2.setPercentWidth(33.33);
+        column2.setHalignment(HPos.CENTER);
+
+        ColumnConstraints column3 = new ColumnConstraints();
+        column3.setPercentWidth(33.33);
+        column3.setHalignment(HPos.CENTER);
+
+        top.getColumnConstraints().addAll(column1, column2, column3);
+
+        Button prevWeek = new Button(viewModel.prevButtonString());
         prevWeek.setOnAction(e -> onPrevWeek.run());
+        prevWeek.getStyleClass().add("weeklyView-prevWeek");
 
-        Label title = new Label(viewModel.getWeekLabel());
-        title.setStyle("-fx-font-size: 16; -fx-font-weight: bold;");
-        title.setAlignment(Pos.CENTER);
+        this.title = new Label(viewModel.getWeekLabel());
+        title.getStyleClass().add("weeklyView-title");
 
-        Button nextWeek = new Button("Next Week");
+        Button nextWeek = new Button(viewModel.nextButtonString());
         nextWeek.setOnAction(e -> onNextWeek.run());
+        nextWeek.getStyleClass().add("weeklyView-nextWeek");
 
-        Region spacerLeft = new Region();
-        Region spacerRight = new Region();
+        top.add(prevWeek, 0, 0);
+        top.add(title, 1, 0);
+        top.add(nextWeek, 2, 0);
 
-        HBox.setHgrow(spacerLeft, Priority.ALWAYS);
-        HBox.setHgrow(spacerRight, Priority.ALWAYS);
-
-        top.getChildren().addAll(prevWeek, spacerLeft, title, spacerRight, nextWeek);
         return top;
     }
+
 
     public HBox createCenter(WeeklyViewModel viewModel) {
         HBox center = new HBox(10);
@@ -74,8 +87,8 @@ public class WeeklyView extends BorderPane {
         center.setFillHeight(true);
 
         for (DailyViewModel dvm : viewModel.getDays()) {
-            DailyView dailyView = new DailyView(dvm, onActivitySelected, onDayHeaderClicked);
-            HBox.setHgrow(dailyView, Priority.ALWAYS); // 👈
+            DailyView dailyView = new DailyView(dvm, onRemove,  onEdit, onDayHeaderClicked);
+            HBox.setHgrow(dailyView, Priority.ALWAYS);
             dailyView.setMaxWidth(Double.MAX_VALUE);
             center.getChildren().add(dailyView);
         }
@@ -85,6 +98,7 @@ public class WeeklyView extends BorderPane {
 
     public void refresh(WeeklyViewModel viewModel) {
         this.viewModel = viewModel;
+        this.title.setText(viewModel.getWeekLabel());
         this.setCenter(createCenter(viewModel));
     }
 }

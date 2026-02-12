@@ -2,6 +2,7 @@ package it.unicam.cs.mpgc.jtime119200.domain;
 
 import it.unicam.cs.mpgc.jtime119200.application.CreateActivityController;
 import it.unicam.cs.mpgc.jtime119200.application.EditActivityController;
+import it.unicam.cs.mpgc.jtime119200.application.RemoveActivityController;
 import it.unicam.cs.mpgc.jtime119200.gui.WeeklyView;
 import it.unicam.cs.mpgc.jtime119200.model.ActivityViewModel;
 import it.unicam.cs.mpgc.jtime119200.model.WeeklyViewModel;
@@ -45,38 +46,37 @@ public class MainApp extends Application {
         };
 
         Consumer<ActivityViewModel> onEdit = activityViewModel -> {
-            EditActivityController editActivityCtrl = new EditActivityController(weeklyViewModel, activityViewModel, activityViewModel.getDate());
+            EditActivityController editActivityCtrl = new EditActivityController(weeklyViewModel, activityViewModel);
             editActivityCtrl.editActivitySignal();
         };
 
-        Runnable onPrevWeek = () -> changeWeek(-1);
+        Consumer<ActivityViewModel> onRemove = activityViewModel -> {
+            RemoveActivityController removeActivityCtrl = new RemoveActivityController(weeklyViewModel, activityViewModel);
+            removeActivityCtrl.removeActivitySignal();
+        };
 
-        Runnable onNextWeek = () -> changeWeek(1);
+        Runnable onPrevWeek = () -> weeklyViewModel.changeWeek(-1);
+
+        Runnable onNextWeek = () -> weeklyViewModel.changeWeek(1);
 
 
-        weeklyView = new WeeklyView(weeklyViewModel, onEdit, onDayHeaderClicked, onPrevWeek, onNextWeek);
+        weeklyView = new WeeklyView(weeklyViewModel, onEdit, onRemove, onDayHeaderClicked, onPrevWeek, onNextWeek);
 
         // 6️⃣ Stage
         Scene scene = new Scene(weeklyView, WIDTH, HEIGHT);
         stage.setTitle("JTime – Gestione Attività 5.0");
         stage.setScene(scene);
-        /*
+
         scene.getStylesheets().add(
                 getClass().getResource("/css/style.css").toExternalForm()
         );
 
-         */
+
         stage.setMaximized(true);
         stage.show();
 
         // 7️⃣ Aggiornamento attività scadute
         calendar.updateExpiredActivities();
-    }
-
-    private void changeWeek(int offset) {
-        weekOffset += offset;
-        WeeklyViewModel newModel = new WeeklyViewModel(calendar, weekOffset);
-        weeklyView.refresh(newModel);
     }
 
     @Override

@@ -1,11 +1,8 @@
-package it.unicam.cs.mpgc.jtime119200.gui;
+package it.unicam.cs.mpgc.jtime119200.gui.form;
 
 import it.unicam.cs.mpgc.jtime119200.application.ActivityFormMode;
-import it.unicam.cs.mpgc.jtime119200.domain.Activity;
-import it.unicam.cs.mpgc.jtime119200.model.ActivityFormModel;
+import it.unicam.cs.mpgc.jtime119200.model.form.CreateAndEditActivityFormModel;
 import it.unicam.cs.mpgc.jtime119200.model.ActivityViewModel;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -15,10 +12,10 @@ import javafx.stage.Stage;
 
 import java.time.*;
 
-public class ActivityFormView {
+public class CreateAndEditActivityForm {
 
-    private final Stage stage;
-    private final ActivityFormModel controller;
+    private final Stage stage = new Stage();
+    private final CreateAndEditActivityFormModel controller;
     private final LocalDate day;
 
     private TextField projectField;
@@ -26,10 +23,7 @@ public class ActivityFormView {
     private TextField startTimeField;
     private TextField durationField;
 
-    public ActivityFormView(Stage stage,
-                            ActivityFormModel controller,
-                            LocalDate day) {
-        this.stage = stage;
+    public CreateAndEditActivityForm(CreateAndEditActivityFormModel controller, LocalDate day) {
         this.controller = controller;
         this.day = day;
 
@@ -46,8 +40,7 @@ public class ActivityFormView {
 
     private Parent createRoot() {
         VBox root = new VBox(10);
-        root.setPadding(new Insets(15));
-        root.setAlignment(Pos.CENTER);
+        root.getStyleClass().add("dialog-root");
 
         projectField = new TextField();
         projectField.setPromptText("Project");
@@ -90,34 +83,26 @@ public class ActivityFormView {
     }
 
     private HBox createButtons() {
-        Button submit = new Button(
-                controller.getMode() == ActivityFormMode.CREATE
-                        ? "Create"
-                        : "Save"
-        );
-
+        Button submit = new Button(controller.getMode() == ActivityFormMode.CREATE ? "Create" : "Save");
+        submit.getStyleClass().add("dialog-submit");
         submit.setOnAction(e -> onSubmit());
 
         Button cancel = new Button("Cancel");
+        cancel.getStyleClass().add("dialog-cancel");
         cancel.setOnAction(e -> stage.close());
 
-        HBox box = new HBox(10, submit, cancel);
-        box.setAlignment(Pos.CENTER);
-        return box;
+        return new HBox(10, submit, cancel);
     }
 
     private void onSubmit() {
         try {
             String project = projectField.getText();
+            if (project.isEmpty()) throw new Exception("Project name cannot be empty");
             String title = titleField.getText();
+            if (title.isEmpty()) throw new Exception("Activity name cannot be empty");
 
-            if (project.isBlank() || title.isBlank()) {
-                throw new IllegalArgumentException("Project and title cannot be empty");
-            }
-
-            Duration duration = Duration.ofMinutes(
-                    Long.parseLong(durationField.getText())
-            );
+            Duration duration = Duration.ofMinutes(Long.parseLong(durationField.getText()));
+            if (duration.isNegative() || duration.toMinutes()>900) throw new Exception("Invalid duration");
 
             Instant startTime = parseStartTime();
 
@@ -131,13 +116,7 @@ public class ActivityFormView {
 
     private Instant parseStartTime() {
         LocalTime time = LocalTime.parse(startTimeField.getText());
-
-        ZonedDateTime zdt = ZonedDateTime.of(
-                day,
-                time,
-                ZoneId.of("UTC+1")
-        );
-
+        ZonedDateTime zdt = ZonedDateTime.of(day, time, ZoneId.of("UTC+1"));
         return zdt.toInstant();
     }
 

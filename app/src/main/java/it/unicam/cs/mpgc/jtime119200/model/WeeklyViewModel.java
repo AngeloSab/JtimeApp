@@ -14,7 +14,7 @@ import java.util.Objects;
 public class WeeklyViewModel {
 
     private final JtimeCalendar calendar;
-    private final int weekOffset;
+    private int weekOffset;
     List<DailyViewModel> days;
 
     private final List<Runnable> listeners = new ArrayList<>();
@@ -45,11 +45,25 @@ public class WeeklyViewModel {
         notifyListeners();
     }
 
+    public void changeWeek(int offset) {
+        weekOffset += offset;
+        this.reloadWeek();
+    }
+
+    public String prevButtonString(){
+        return "Previous week";
+    }
+
+    public String nextButtonString(){
+        return "Next week";
+    }
+
     public void addListener(Runnable listener) {
         listeners.add(listener);
     }
 
     public void notifyListeners() {
+        buildWeeklyView();
         listeners.forEach(Runnable::run);
     }
 
