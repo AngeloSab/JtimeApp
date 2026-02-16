@@ -5,7 +5,6 @@ import it.unicam.cs.mpgc.jtime119200.model.ActivityViewModel;
 import it.unicam.cs.mpgc.jtime119200.model.DailyViewModel;
 import it.unicam.cs.mpgc.jtime119200.model.WeeklyViewModel;
 import javafx.geometry.HPos;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -22,6 +21,8 @@ public class WeeklyView extends BorderPane {
     private WeeklyViewModel viewModel;
     private final Consumer<ActivityViewModel> onEdit;
     private final Consumer<ActivityViewModel> onRemove;
+    private final Consumer<ActivityView> onSelect;
+    private final Consumer<ActivityView>onComplete;
     private final Consumer<LocalDate> onDayHeaderClicked;
     private final Runnable onPrevWeek;
     private final Runnable onNextWeek;
@@ -31,12 +32,16 @@ public class WeeklyView extends BorderPane {
     public WeeklyView(WeeklyViewModel viewModel,
                       Consumer<ActivityViewModel> onEdit,
                       Consumer<ActivityViewModel> onRemove,
+                      Consumer<ActivityView> onSelect,
+                      Consumer<ActivityView> onComplete,
                       Consumer<LocalDate> onDayHeaderClicked,
                       Runnable onPrevWeek,
                       Runnable onNextWeek) {
         this.viewModel = viewModel;
         this.onEdit = onEdit;
         this.onRemove = onRemove;
+        this.onSelect = onSelect;
+        this.onComplete = onComplete;
         this.onDayHeaderClicked = onDayHeaderClicked;
         this.onPrevWeek = onPrevWeek;
         this.onNextWeek = onNextWeek;
@@ -87,7 +92,7 @@ public class WeeklyView extends BorderPane {
         center.setFillHeight(true);
 
         for (DailyViewModel dvm : viewModel.getDays()) {
-            DailyView dailyView = new DailyView(dvm, onRemove,  onEdit, onDayHeaderClicked);
+            DailyView dailyView = new DailyView(dvm, onRemove,  onEdit, onSelect, onComplete, onDayHeaderClicked);
             HBox.setHgrow(dailyView, Priority.ALWAYS);
             dailyView.setMaxWidth(Double.MAX_VALUE);
             center.getChildren().add(dailyView);

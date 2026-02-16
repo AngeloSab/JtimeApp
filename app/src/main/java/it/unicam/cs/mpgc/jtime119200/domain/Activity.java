@@ -51,8 +51,6 @@ public class Activity implements Comparable<Activity> {
         return actualDuration;
     }
 
-    public Instant getActualEndTime() {return actualEndTime;}
-
     public Instant getStartTime() {
         return startTime;
     }
@@ -78,9 +76,6 @@ public class Activity implements Comparable<Activity> {
         this.project = project;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
 
     // ---------- behavior ----------
 

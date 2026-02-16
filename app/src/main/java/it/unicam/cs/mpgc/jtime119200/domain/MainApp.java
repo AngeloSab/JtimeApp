@@ -1,8 +1,10 @@
 package it.unicam.cs.mpgc.jtime119200.domain;
 
+import it.unicam.cs.mpgc.jtime119200.application.CompleteActivityController;
 import it.unicam.cs.mpgc.jtime119200.application.CreateActivityController;
 import it.unicam.cs.mpgc.jtime119200.application.EditActivityController;
 import it.unicam.cs.mpgc.jtime119200.application.RemoveActivityController;
+import it.unicam.cs.mpgc.jtime119200.gui.ActivityView;
 import it.unicam.cs.mpgc.jtime119200.gui.WeeklyView;
 import it.unicam.cs.mpgc.jtime119200.model.ActivityViewModel;
 import it.unicam.cs.mpgc.jtime119200.model.WeeklyViewModel;
@@ -23,11 +25,9 @@ public class MainApp extends Application {
     private final JtimeCalendar calendar = new JtimeCalendar();
 
     private final File xmlFile = new File(System.getProperty("user.home"), "calendar_data.xml");
-    private final CalendarReader reader = new CalendarReader(xmlFile);
     private final CalendarWriter writer = new CalendarWriter(xmlFile);
 
     private WeeklyView weeklyView;
-    private int weekOffset = 0;
 
 
     @Override
@@ -36,6 +36,7 @@ public class MainApp extends Application {
         CalendarReader reader = new CalendarReader(xmlFile);
         reader.saveRead(calendar);
 
+        int weekOffset = 0;
         WeeklyViewModel weeklyViewModel = new WeeklyViewModel(calendar, weekOffset);
         weeklyViewModel.addListener(() -> weeklyView.refresh(weeklyViewModel));
 
@@ -55,16 +56,27 @@ public class MainApp extends Application {
             removeActivityCtrl.removeActivitySignal();
         };
 
+        Consumer<ActivityView> onSelect = activityView -> {
+            CompleteActivityController completeActivityCtrl = new CompleteActivityController(activityView);
+            completeActivityCtrl.selectSignal();
+        };
+
+        Consumer<ActivityView> onComplete = activityView -> {
+            CompleteActivityController completeActivityCtrl = new CompleteActivityController(activityView);
+            completeActivityCtrl.completeSignal();
+        };
+
         Runnable onPrevWeek = () -> weeklyViewModel.changeWeek(-1);
 
         Runnable onNextWeek = () -> weeklyViewModel.changeWeek(1);
 
 
-        weeklyView = new WeeklyView(weeklyViewModel, onEdit, onRemove, onDayHeaderClicked, onPrevWeek, onNextWeek);
+        weeklyView = new WeeklyView(weeklyViewModel, onEdit, onRemove, onSelect, onComplete,
+                onDayHeaderClicked, onPrevWeek, onNextWeek);
 
         // 6️⃣ Stage
         Scene scene = new Scene(weeklyView, WIDTH, HEIGHT);
-        stage.setTitle("JTime – Gestione Attività 5.0");
+        stage.setTitle("Jtime Calendar - Manage your Activities and Projects");
         stage.setScene(scene);
 
         scene.getStylesheets().add(
@@ -75,7 +87,6 @@ public class MainApp extends Application {
         stage.setMaximized(true);
         stage.show();
 
-        // 7️⃣ Aggiornamento attività scadute
         calendar.updateExpiredActivities();
     }
 

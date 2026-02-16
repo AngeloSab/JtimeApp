@@ -5,7 +5,6 @@ import it.unicam.cs.mpgc.jtime119200.domain.ActivityStatus;
 import it.unicam.cs.mpgc.jtime119200.domain.service.ActivityTimeCalculator;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
@@ -14,7 +13,7 @@ public class ActivityViewModel {
     private static final String zone = "Europe/Rome";
     private static final DateTimeFormatter hoursMins = DateTimeFormatter.ofPattern("HH:mm");
     private final Activity activity;
-    ActivityTimeCalculator calculator;
+    private final ActivityTimeCalculator calculator;
 
     public ActivityViewModel(Activity activity) {
         this.activity = activity;
@@ -35,8 +34,7 @@ public class ActivityViewModel {
                              "\nExpected End Time " + activity.expectedEndTime().atZone(ZoneId.of(zone)).format(hoursMins);
             case COMPLETED -> "Started at " + activity.getStartTime().atZone(ZoneId.of(zone)).format(hoursMins)+
                     "\nExpected End Time " + activity.expectedEndTime().atZone(ZoneId.of(zone)).format(hoursMins) +
-                    "\nActual Duration: " + activity.getActualDuration().toMinutes() + " min" +
-                    "\nEstimation Difference: " + calculator.estimationDifference().toMinutes() + " min";
+                    "\nActual EndTime: " + calculator.actualEndTime().atZone(ZoneId.of(zone)).format(hoursMins);
             case EXPIRED -> "Activity expired";
         };
     }
@@ -50,7 +48,7 @@ public class ActivityViewModel {
     }
 
     public boolean isClickable() {
-        return activity.getStatus() != ActivityStatus.COMPLETED;
+        return activity.getStatus() == ActivityStatus.PLANNED;
     }
 
     public Activity getActivity() {
@@ -68,4 +66,5 @@ public class ActivityViewModel {
     public String getExpectedDurationMinutes() {
         return activity.getExpectedDuration().toMinutes()+"";
     }
+
 }

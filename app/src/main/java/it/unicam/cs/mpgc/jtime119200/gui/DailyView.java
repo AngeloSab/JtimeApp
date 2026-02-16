@@ -20,24 +20,23 @@ public class DailyView extends VBox {
     public DailyView(DailyViewModel viewModel,
                      Consumer<ActivityViewModel> onRemove,
                      Consumer<ActivityViewModel> onEdit,
+                     Consumer<ActivityView> onSelect,
+                     Consumer<ActivityView> onComplete,
                      Consumer<LocalDate> onDayHeaderClicked) {
 
         this.viewModel = viewModel;
         this.onDayHeaderClicked = onDayHeaderClicked;
 
         this.getStyleClass().add("dailyView");
-        this.setSpacing(0);
         this.setFillWidth(true);
 
-        // HEADER
         VBox header = createDayHeader();
 
-        // ACTIVITIES BOX
-        VBox activities = new VBox(8);
+        VBox activities = new VBox();
         activities.getStyleClass().add("dailyView-activities");
 
         for (ActivityViewModel avm : viewModel.getActivities()) {
-            ActivityView avView = new ActivityView(avm, onEdit, onRemove);
+            ActivityView avView = new ActivityView(avm, onEdit, onRemove, onSelect, onComplete);
             activities.getChildren().add(avView);
         }
 

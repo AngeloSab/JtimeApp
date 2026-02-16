@@ -22,6 +22,10 @@ public class ActivityTimeCalculator {
                 .minus(activity.getExpectedDuration());
     }
 
+    public Instant actualEndTime() {
+        return activity.getStartTime().plus(activity.getActualDuration());
+    }
+
 
 
 

@@ -1,53 +1,77 @@
 package it.unicam.cs.mpgc.jtime119200.gui;
 
+import it.unicam.cs.mpgc.jtime119200.gui.form.CompleteActivityForm;
 import it.unicam.cs.mpgc.jtime119200.model.ActivityViewModel;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
 import java.util.function.Consumer;
 
-/**
- * Small card-like component used to display an activity in the day column.
- */
 public class ActivityView extends StackPane {
 
     private final ActivityViewModel viewModel;
     private final Consumer<ActivityViewModel> onEdit;
     private final Consumer<ActivityViewModel> onRemove;
-    Tooltip actTip;
+    private final Consumer<ActivityView> onSelect;
+    private final Consumer<ActivityView> onComplete;
+
+    private final StackPane mainPane;
+
+    private Node overlay;
+
 
     public ActivityView(ActivityViewModel viewModel,
                         Consumer<ActivityViewModel> onEdit,
-                        Consumer<ActivityViewModel> onRemove) {
+                        Consumer<ActivityViewModel> onRemove,
+                        Consumer<ActivityView> onSelect,
+                        Consumer<ActivityView> onComplete) {
 
         this.viewModel = viewModel;
         this.onEdit = onEdit;
         this.onRemove = onRemove;
+        this.onSelect = onSelect;
+        this.onComplete = onComplete;
 
-        this.getStyleClass().add("activityView");
+        mainPane = new StackPane();
+        this.getChildren().add(mainPane);
+
+        mainPane.getStyleClass().add("activityView");
+
+        initialize();
+    }
+
+    private void initialize() {
         applyActivityStyle();
 
-        actTip = new Tooltip(viewModel.getTooltipText());
+        Tooltip actTip = new Tooltip(viewModel.getTooltipText());
         actTip.setShowDelay(new Duration(250));
         Tooltip.install(this, actTip);
 
-        VBox content = new VBox();
-        content.setFillWidth(true);
-
         Label title = new Label(viewModel.getDescription());
         title.getStyleClass().add("activity-title");
+        StackPane.setAlignment(title, Pos.TOP_LEFT);
 
-        content.getChildren().add(title);
+        mainPane.getChildren().add(title);
 
-        Button tripleDot = createTripleDot();
 
-        StackPane.setAlignment(tripleDot, Pos.TOP_RIGHT);
+        if (viewModel.isClickable()) {
+            Button tripleDot = createTripleDot();
+            StackPane.setAlignment(tripleDot, Pos.TOP_RIGHT);
+            Button checkButton = createCheckButton();
+            StackPane.setAlignment(checkButton, Pos.BOTTOM_LEFT);
 
-        this.getChildren().addAll(content, tripleDot);
+
+            mainPane.getChildren().addAll(tripleDot, checkButton);
+
+            mainPane.setOnMouseClicked(event -> {
+                    checkButton.setVisible(true);
+                    onSelect.accept(this);
+            });
+        }
     }
 
 
@@ -74,12 +98,32 @@ public class ActivityView extends StackPane {
         return tripleDot;
     }
 
+    public Button createCheckButton() {
+        Button check = new Button("✅");
+        check.setVisible(false);
+        check.getStyleClass().add("activityView-check");
+        check.setOnAction(event -> onComplete.accept(this));
+        return check;
+    }
 
-    private void applyActivityStyle() {
+    public void showCompleteForm(CompleteActivityForm form) {
+        this.getChildren().clear();
+        this.getChildren().add(form);
+    }
+
+    public  void hideCompleteForm() {
+        this.getChildren().clear();
+        this.getChildren().add(mainPane);
+    }
+
+    private void applyActivityStyle () {
         switch (viewModel.getActivity().getStatus()) {
             case PLANNED -> this.getStyleClass().add("activityView-planned");
             case COMPLETED -> this.getStyleClass().add("activityView-completed");
             case EXPIRED -> this.getStyleClass().add("activityView-expired");
         }
+    }
+    public ActivityViewModel getViewModel() {
+        return viewModel;
     }
 }
