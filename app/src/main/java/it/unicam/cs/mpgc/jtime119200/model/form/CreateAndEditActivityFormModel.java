@@ -12,7 +12,6 @@ import java.time.LocalDate;
 
 public class CreateAndEditActivityFormModel {
 
-    private final WeeklyViewModel weeklyViewModel;
     private final ActivityFormMode mode;
 
     private final ActivityViewModel activity;
@@ -23,7 +22,6 @@ public class CreateAndEditActivityFormModel {
 
     public CreateAndEditActivityFormModel(WeeklyViewModel weeklyViewModel,
                                           LocalDate day) {
-        this.weeklyViewModel = weeklyViewModel;
         this.day = day;
         this.activity = null;
         this.mode = ActivityFormMode.CREATE;
@@ -33,7 +31,6 @@ public class CreateAndEditActivityFormModel {
     public CreateAndEditActivityFormModel(WeeklyViewModel weeklyViewModel,
                                           ActivityViewModel activity
                              , LocalDate day) {
-        this.weeklyViewModel = weeklyViewModel;
         this.activity = activity;
         this.day = day;
         this.mode = ActivityFormMode.EDIT;
