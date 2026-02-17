@@ -1,4 +1,4 @@
-package it.unicam.cs.mpgc.jtime119200.application;
+package it.unicam.cs.mpgc.jtime119200.controllers;
 
 public enum ActivityFormMode {
     CREATE,

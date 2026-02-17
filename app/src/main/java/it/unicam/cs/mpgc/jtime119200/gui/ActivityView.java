@@ -1,40 +1,25 @@
 package it.unicam.cs.mpgc.jtime119200.gui;
 
+import it.unicam.cs.mpgc.jtime119200.controllers.EventController;
 import it.unicam.cs.mpgc.jtime119200.gui.form.CompleteActivityForm;
 import it.unicam.cs.mpgc.jtime119200.model.ActivityViewModel;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
-import java.util.function.Consumer;
-
 public class ActivityView extends StackPane {
 
     private final ActivityViewModel viewModel;
-    private final Consumer<ActivityViewModel> onEdit;
-    private final Consumer<ActivityViewModel> onRemove;
-    private final Consumer<ActivityView> onSelect;
-    private final Consumer<ActivityView> onComplete;
-
+    private final EventController controller;
     private final StackPane mainPane;
+    private Button checkButton;
 
-    private Node overlay;
-
-
-    public ActivityView(ActivityViewModel viewModel,
-                        Consumer<ActivityViewModel> onEdit,
-                        Consumer<ActivityViewModel> onRemove,
-                        Consumer<ActivityView> onSelect,
-                        Consumer<ActivityView> onComplete) {
+    public ActivityView(ActivityViewModel viewModel, EventController controller) {
 
         this.viewModel = viewModel;
-        this.onEdit = onEdit;
-        this.onRemove = onRemove;
-        this.onSelect = onSelect;
-        this.onComplete = onComplete;
+        this.controller = controller;
 
         mainPane = new StackPane();
         this.getChildren().add(mainPane);
@@ -68,12 +53,12 @@ public class ActivityView extends StackPane {
             mainPane.getChildren().addAll(tripleDot, checkButton);
 
             mainPane.setOnMouseClicked(event -> {
-                    checkButton.setVisible(true);
-                    onSelect.accept(this);
+                event.consume();
+                checkButton.setVisible(true);
+                controller.onSelect(this);
             });
         }
     }
-
 
     private Button createTripleDot() {
 
@@ -82,11 +67,11 @@ public class ActivityView extends StackPane {
 
         MenuItem editItem = new MenuItem("Edit Activity");
         if (viewModel.isClickable())
-            editItem.setOnAction(event -> onEdit.accept(viewModel));
+            editItem.setOnAction(event -> controller.onEdit(viewModel));
 
         MenuItem removeItem = new MenuItem("Remove Activity");
         if (viewModel.isClickable())
-            removeItem.setOnAction(event -> onRemove.accept(viewModel));
+            removeItem.setOnAction(event -> controller.onRemove(viewModel));
 
         removeItem.getStyleClass().add("activity-remove-item");
 
@@ -99,11 +84,11 @@ public class ActivityView extends StackPane {
     }
 
     public Button createCheckButton() {
-        Button check = new Button("✅");
-        check.setVisible(false);
-        check.getStyleClass().add("activityView-check");
-        check.setOnAction(event -> onComplete.accept(this));
-        return check;
+        checkButton = new Button("✅");
+        checkButton.setVisible(false);
+        checkButton.getStyleClass().add("activityView-check");
+        checkButton.setOnAction(event -> controller.onComplete(this));
+        return checkButton;
     }
 
     public void showCompleteForm(CompleteActivityForm form) {
@@ -125,5 +110,9 @@ public class ActivityView extends StackPane {
     }
     public ActivityViewModel getViewModel() {
         return viewModel;
+    }
+
+    public void hideCheckButton() {
+        checkButton.setVisible(false);
     }
 }

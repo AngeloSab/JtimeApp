@@ -1,4 +1,4 @@
-package it.unicam.cs.mpgc.jtime119200.application;
+package it.unicam.cs.mpgc.jtime119200.controllers;
 
 import it.unicam.cs.mpgc.jtime119200.domain.JtimeCalendar;
 import it.unicam.cs.mpgc.jtime119200.gui.form.RemoveActivityForm;

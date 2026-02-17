@@ -1,10 +1,7 @@
-package it.unicam.cs.mpgc.jtime119200.application;
+package it.unicam.cs.mpgc.jtime119200.controllers;
 
-import it.unicam.cs.mpgc.jtime119200.domain.JtimeCalendar;
 import it.unicam.cs.mpgc.jtime119200.gui.ActivityView;
 import it.unicam.cs.mpgc.jtime119200.gui.form.CompleteActivityForm;
-import it.unicam.cs.mpgc.jtime119200.model.ActivityViewModel;
-import it.unicam.cs.mpgc.jtime119200.model.WeeklyViewModel;
 
 import java.time.Duration;
 

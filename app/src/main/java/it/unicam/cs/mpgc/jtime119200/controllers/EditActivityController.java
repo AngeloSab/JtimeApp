@@ -1,11 +1,10 @@
-package it.unicam.cs.mpgc.jtime119200.application;
+package it.unicam.cs.mpgc.jtime119200.controllers;
 
 import it.unicam.cs.mpgc.jtime119200.domain.JtimeCalendar;
 import it.unicam.cs.mpgc.jtime119200.gui.form.CreateAndEditActivityForm;
 import it.unicam.cs.mpgc.jtime119200.model.form.CreateAndEditActivityFormModel;
 import it.unicam.cs.mpgc.jtime119200.model.ActivityViewModel;
 import it.unicam.cs.mpgc.jtime119200.model.WeeklyViewModel;
-import javafx.stage.Stage;
 
 import java.time.Duration;
 import java.time.Instant;

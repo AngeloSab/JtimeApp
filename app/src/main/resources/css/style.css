@@ -54,6 +54,10 @@
     -fx-spacing: 8;
 }
 
+.scroll{
+    -fx-fit-to-width: true;
+}
+
 .dailyView-title {
     -fx-font-size: 14px;
     -fx-font-weight: bold;

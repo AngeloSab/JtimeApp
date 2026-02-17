@@ -1,7 +1,7 @@
 package it.unicam.cs.mpgc.jtime119200.gui;
 
 
-import it.unicam.cs.mpgc.jtime119200.model.ActivityViewModel;
+import it.unicam.cs.mpgc.jtime119200.controllers.EventController;
 import it.unicam.cs.mpgc.jtime119200.model.DailyViewModel;
 import it.unicam.cs.mpgc.jtime119200.model.WeeklyViewModel;
 import javafx.geometry.HPos;
@@ -10,41 +10,20 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 
-import java.time.LocalDate;
-import java.util.function.Consumer;
-
 /**
  * Main week view layout. Responsible for navigation and rendering day columns.
  */
 public class WeeklyView extends BorderPane {
 
     private WeeklyViewModel viewModel;
-    private final Consumer<ActivityViewModel> onEdit;
-    private final Consumer<ActivityViewModel> onRemove;
-    private final Consumer<ActivityView> onSelect;
-    private final Consumer<ActivityView>onComplete;
-    private final Consumer<LocalDate> onDayHeaderClicked;
-    private final Runnable onPrevWeek;
-    private final Runnable onNextWeek;
+
     private Label title;
+    private final EventController controller;
 
 
-    public WeeklyView(WeeklyViewModel viewModel,
-                      Consumer<ActivityViewModel> onEdit,
-                      Consumer<ActivityViewModel> onRemove,
-                      Consumer<ActivityView> onSelect,
-                      Consumer<ActivityView> onComplete,
-                      Consumer<LocalDate> onDayHeaderClicked,
-                      Runnable onPrevWeek,
-                      Runnable onNextWeek) {
+    public WeeklyView(WeeklyViewModel viewModel, EventController controller) {
         this.viewModel = viewModel;
-        this.onEdit = onEdit;
-        this.onRemove = onRemove;
-        this.onSelect = onSelect;
-        this.onComplete = onComplete;
-        this.onDayHeaderClicked = onDayHeaderClicked;
-        this.onPrevWeek = onPrevWeek;
-        this.onNextWeek = onNextWeek;
+        this.controller = controller;
         this.setTop(createTop());
         this.setCenter(createCenter(viewModel));
     }
@@ -68,14 +47,14 @@ public class WeeklyView extends BorderPane {
         top.getColumnConstraints().addAll(column1, column2, column3);
 
         Button prevWeek = new Button(viewModel.prevButtonString());
-        prevWeek.setOnAction(e -> onPrevWeek.run());
+        prevWeek.setOnAction(e -> controller.onPrevWeek());
         prevWeek.getStyleClass().add("weeklyView-prevWeek");
 
         this.title = new Label(viewModel.getWeekLabel());
         title.getStyleClass().add("weeklyView-title");
 
         Button nextWeek = new Button(viewModel.nextButtonString());
-        nextWeek.setOnAction(e -> onNextWeek.run());
+        nextWeek.setOnAction(e -> controller.onNextWeek());
         nextWeek.getStyleClass().add("weeklyView-nextWeek");
 
         top.add(prevWeek, 0, 0);
@@ -92,7 +71,7 @@ public class WeeklyView extends BorderPane {
         center.setFillHeight(true);
 
         for (DailyViewModel dvm : viewModel.getDays()) {
-            DailyView dailyView = new DailyView(dvm, onRemove,  onEdit, onSelect, onComplete, onDayHeaderClicked);
+            DailyView dailyView = new DailyView(dvm, controller);
             HBox.setHgrow(dailyView, Priority.ALWAYS);
             dailyView.setMaxWidth(Double.MAX_VALUE);
             center.getChildren().add(dailyView);
