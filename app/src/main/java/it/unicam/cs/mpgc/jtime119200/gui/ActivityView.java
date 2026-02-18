@@ -46,18 +46,18 @@ public class ActivityView extends StackPane {
         if (viewModel.isClickable()) {
             Button tripleDot = createTripleDot();
             StackPane.setAlignment(tripleDot, Pos.TOP_RIGHT);
-            Button checkButton = createCheckButton();
-            StackPane.setAlignment(checkButton, Pos.BOTTOM_LEFT);
 
+            checkButton = createCheckButton();   // ← USO IL CAMPO
+            StackPane.setAlignment(checkButton, Pos.BOTTOM_LEFT);
 
             mainPane.getChildren().addAll(tripleDot, checkButton);
 
             mainPane.setOnMouseClicked(event -> {
                 event.consume();
-                checkButton.setVisible(true);
                 controller.onSelect(this);
             });
         }
+
     }
 
     private Button createTripleDot() {
@@ -114,5 +114,9 @@ public class ActivityView extends StackPane {
 
     public void hideCheckButton() {
         checkButton.setVisible(false);
+    }
+
+    public void showCheckButton() {
+        checkButton.setVisible(true);
     }
 }

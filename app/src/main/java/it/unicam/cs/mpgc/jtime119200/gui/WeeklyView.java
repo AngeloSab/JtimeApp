@@ -2,11 +2,13 @@ package it.unicam.cs.mpgc.jtime119200.gui;
 
 
 import it.unicam.cs.mpgc.jtime119200.controllers.EventController;
+import it.unicam.cs.mpgc.jtime119200.domain.Project;
 import it.unicam.cs.mpgc.jtime119200.model.DailyViewModel;
 import it.unicam.cs.mpgc.jtime119200.model.WeeklyViewModel;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 
@@ -32,19 +34,14 @@ public class WeeklyView extends BorderPane {
         GridPane top = new GridPane();
         top.getStyleClass().add("weeklyView-top");
 
-        ColumnConstraints column1 = new ColumnConstraints();
-        column1.setPercentWidth(33.33);
-        column1.setHalignment(HPos.CENTER);
+        for (int i = 0; i<5; i++) {
+            ColumnConstraints col = new ColumnConstraints();
+            col.setPercentWidth(20);
+            col.setHalignment(HPos.CENTER);
+            top.getColumnConstraints().add(col);
+        }
 
-        ColumnConstraints column2 = new ColumnConstraints();
-        column2.setPercentWidth(33.33);
-        column2.setHalignment(HPos.CENTER);
 
-        ColumnConstraints column3 = new ColumnConstraints();
-        column3.setPercentWidth(33.33);
-        column3.setHalignment(HPos.CENTER);
-
-        top.getColumnConstraints().addAll(column1, column2, column3);
 
         Button prevWeek = new Button(viewModel.prevButtonString());
         prevWeek.setOnAction(e -> controller.onPrevWeek());
@@ -57,11 +54,34 @@ public class WeeklyView extends BorderPane {
         nextWeek.setOnAction(e -> controller.onNextWeek());
         nextWeek.getStyleClass().add("weeklyView-nextWeek");
 
-        top.add(prevWeek, 0, 0);
-        top.add(title, 1, 0);
-        top.add(nextWeek, 2, 0);
+        VBox reportBox = createReportBox();
+
+        top.add(prevWeek, 1, 0);
+        top.add(title, 2, 0);
+        top.add(nextWeek, 3, 0);
+        top.add(reportBox, 4, 0);
 
         return top;
+    }
+
+    private VBox createReportBox() {
+        VBox reportBox = new VBox();
+        reportBox.getStyleClass().add("weeklyView-reportBox");
+
+        Label reportBoxLabel = new Label(viewModel.reportString());
+        reportBoxLabel.getStyleClass().add("weeklyView-reportBoxLabel");
+
+        ComboBox<Project> reportProjectList = new ComboBox<>();
+        for (Project p : controller.getProjectList()) {
+            reportProjectList.getItems().add(p);
+        }
+
+        reportProjectList.getStyleClass().add("weeklyView-reportProjectList");
+        reportBox.getChildren().addAll(reportBoxLabel, reportProjectList);
+
+        reportProjectList.setOnAction(e -> controller.projectReport(reportProjectList.getValue()));
+
+        return reportBox;
     }
 
 

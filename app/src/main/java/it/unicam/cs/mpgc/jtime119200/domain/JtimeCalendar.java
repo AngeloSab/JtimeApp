@@ -94,6 +94,18 @@ public class JtimeCalendar {
         return Collections.unmodifiableList(projects);
     }
 
+    /**
+     * Removes the specified project and all the activities contained in that project.
+     *
+     * @param project the activity to remove
+     */
+    public void removeProject(Project project) {
+        for (Activity activity : project.getActivities()) {
+            removeActivity(project, activity);
+        }
+        projects.remove(project);
+    }
+
     // ================== ACTIVITIES ==================
     /**
      * Create a new Activity and check if there is overlaps:
@@ -128,8 +140,6 @@ public class JtimeCalendar {
      * @param project the project from which the activity should be removed
      * @param activity the activity to remove
      */
-
-
     public void removeActivity(Project project, Activity activity) {
         project.removeActivity(activity);
         Day day = days.get(activity.getDate());
@@ -137,6 +147,17 @@ public class JtimeCalendar {
     }
 
     public void editActivity(Activity activity, Project project, Duration expectedDuration, Instant startTime) {
+
+        Day day = getDay(activity.getDate());
+        Activity candidate = new Activity(project, activity.getTitle(), expectedDuration, startTime, activity.getDate());
+        for (Activity existing : day.getActivities()) {
+            if (existing == activity) {
+                continue;
+            }
+            if (existing.overlaps(candidate)) {
+                throw new ActivityOverlapException("Activity overlaps another activity in the same day");
+            }
+        }
         activity.setProject(project);
         activity.setStartTime(startTime);
         activity.setExpectedDuration(expectedDuration);

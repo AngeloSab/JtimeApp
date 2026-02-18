@@ -83,6 +83,10 @@ public class WeeklyViewModel {
         return this.days;
     }
 
+    public String reportString(){
+        return "Select the Project's Report";
+    }
+
     public String getWeekLabel() {
         return "Week " + getWeekStart() + " - " + getWeekEnd();
     }

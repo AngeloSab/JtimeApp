@@ -66,6 +66,7 @@
 
 /* ====== ACTIVITY ======== */
 
+
 .activityView {
     -fx-pref-height: 110;
     -fx-padding: 8;
@@ -127,4 +128,131 @@
     -fx-spacing: 10;
     -fx-padding: 2 6 2 6;
     -fx-pref-height: 110;
+}
+
+
+/*========ProjectReport============*/
+
+.projectReport-root {
+    -fx-padding: 25;
+    -fx-background-color: #f5f7fa;
+}
+
+.ProjectReportView-title {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1e293b;
+}
+
+.ProjectReportView-status {
+    -fx-font-size: 14px;
+    -fx-text-fill: #64748b;
+}
+
+.section-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #334155;
+    -fx-padding: 0 0 8 0;
+}
+
+.projectReport-activityList {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #334155;
+}
+
+.label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #475569;
+}
+
+.ProjectReportView-pieLabel {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #334155;
+    -fx-padding: 0 0 10 0;
+}
+
+.ProjectReportView-piePie {
+    -fx-pref-width: 300px;
+    -fx-pref-height: 300px;
+}
+
+.chart-pie.data0 {
+    -fx-pie-color: #22c55e; /* Completed - green */
+}
+
+.chart-pie.data1 {
+    -fx-pie-color: #3b82f6; /* Planned - blue */
+}
+
+.chart-pie.data2 {
+    -fx-pie-color: #ef4444; /* Expired - red */
+}
+
+.ProjectReportView-progressLabel {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 10 0 5 0;
+}
+
+.ProjectReportView-progressBar {
+    -fx-pref-width: 250px;
+    -fx-accent: #3b82f6;
+}
+
+.scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane .viewport {
+    -fx-background-color: #ffffff;
+}
+
+.scroll-bar:vertical {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #cbd5e1;
+    -fx-background-radius: 5;
+}
+
+.hbox {
+    -fx-alignment: center-left;
+}
+
+.hbox .label {
+    -fx-font-size: 13px;
+}
+
+.ProjectReportView-closeButton {
+    -fx-background-color: #e2e8f0;
+    -fx-text-fill: #1e293b;
+    -fx-font-weight: bold;
+    -fx-padding: 8 16 8 16;
+    -fx-background-radius: 6;
+}
+
+.ProjectReportView-closeButton:hover {
+    -fx-background-color: #cbd5e1;
+}
+
+
+.ProjectReportView-closeAndDeleteButton {
+    -fx-background-color: #ef4444;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8 16 8 16;
+    -fx-background-radius: 6;
+}
+
+.ProjectReportView-closeAndDeleteButton:hover {
+    -fx-background-color: #dc2626;
+}
+
+.separator .line {
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1;
 }

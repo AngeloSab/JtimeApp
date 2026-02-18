@@ -20,17 +20,14 @@ public class CreateAndEditActivityFormModel {
     private CreateActivityController createController;
     private EditActivityController editController;
 
-    public CreateAndEditActivityFormModel(WeeklyViewModel weeklyViewModel,
-                                          LocalDate day) {
+    public CreateAndEditActivityFormModel(WeeklyViewModel weeklyViewModel, LocalDate day) {
         this.day = day;
         this.activity = null;
         this.mode = ActivityFormMode.CREATE;
         this.createController = new CreateActivityController(weeklyViewModel, day);
     }
 
-    public CreateAndEditActivityFormModel(WeeklyViewModel weeklyViewModel,
-                                          ActivityViewModel activity
-                             , LocalDate day) {
+    public CreateAndEditActivityFormModel(WeeklyViewModel weeklyViewModel, ActivityViewModel activity, LocalDate day) {
         this.activity = activity;
         this.day = day;
         this.mode = ActivityFormMode.EDIT;

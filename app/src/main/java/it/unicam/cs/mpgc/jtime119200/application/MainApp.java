@@ -39,6 +39,10 @@ public class MainApp extends Application {
         stage.setTitle("Jtime Calendar - Manage your Activities and Projects");
         stage.setScene(scene);
 
+        scene.setOnMouseClicked(event -> {
+            controller.clearSelection();
+        });
+
         scene.getStylesheets().add(
                 getClass().getResource("/css/style.css").toExternalForm()
         );

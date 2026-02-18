@@ -15,7 +15,6 @@ public class ProjectProgressionCalculator {
         for (Activity activity : project.getActivities()){
             if (!activity.isCompleted()) return false;
         }
-        project.complete();
         return true;
     }
 

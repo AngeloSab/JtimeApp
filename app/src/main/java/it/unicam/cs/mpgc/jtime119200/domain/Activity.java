@@ -55,9 +55,9 @@ public class Activity implements Comparable<Activity> {
         return startTime;
     }
 
-    public boolean isCompleted() {
-        return (status == ActivityStatus.COMPLETED);
-    }
+    public boolean isCompleted() {return (status == ActivityStatus.COMPLETED);}
+
+    public boolean isExpired() {return (status == ActivityStatus.EXPIRED);}
 
     public LocalDate getDate() {
         return date;
