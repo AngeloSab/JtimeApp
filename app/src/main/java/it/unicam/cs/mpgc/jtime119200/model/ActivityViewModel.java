@@ -47,8 +47,16 @@ public class ActivityViewModel {
         return activity.getTitle();
     }
 
-    public boolean isClickable() {
+    public boolean isPlanned() {
         return activity.getStatus() == ActivityStatus.PLANNED;
+    }
+
+    public boolean isCompleted() {
+        return activity.getStatus() == ActivityStatus.COMPLETED;
+    }
+
+    public boolean isExpired() {
+        return activity.getStatus() == ActivityStatus.EXPIRED;
     }
 
     public Activity getActivity() {
@@ -59,7 +67,7 @@ public class ActivityViewModel {
         return activity.getProject().getName();
     }
 
-    public String getStartTimeAsString() {
+    public String getStartTime() {
         return activity.getStartTime().atZone(ZoneId.of(zone)).format(hoursMins);
     }
 
@@ -67,4 +75,28 @@ public class ActivityViewModel {
         return activity.getExpectedDuration().toMinutes()+"";
     }
 
+    public String getStatusSymbol() {
+        if (activity.getStatus().equals(ActivityStatus.PLANNED)) return "⏳";
+        if (activity.getStatus().equals(ActivityStatus.COMPLETED)) return "✔";
+        else return "✖";
+    }
+
+    public String getExpectedEnd() {
+        return activity.expectedEndTime().atZone(ZoneId.of(zone)).format(hoursMins);
+    }
+
+    public String getActualEndOrDash() {
+        if (activity.isCompleted()) return calculator.actualEndTime().atZone(ZoneId.of(zone)).format(hoursMins);
+        else return "-";
+    }
+
+    public String getActualDurationOrDash() {
+        if (activity.isCompleted()) return activity.getActualDuration().toMinutes()+"";
+        else return "-";
+    }
+
+    public String getDurationDifference() {
+        if (activity.isCompleted()) return calculator.estimationDifference().toMinutes()+"";
+        else return "-";
+    }
 }

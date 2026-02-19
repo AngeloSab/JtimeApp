@@ -78,7 +78,7 @@ public class CreateAndEditActivityForm {
 
         projectField.setText(activityVM.getProjectName());
         titleField.setText(activityVM.getTitle());
-        startTimeField.setText(activityVM.getStartTimeAsString());
+        startTimeField.setText(activityVM.getStartTime());
         durationField.setText(activityVM.getExpectedDurationMinutes());
     }
 

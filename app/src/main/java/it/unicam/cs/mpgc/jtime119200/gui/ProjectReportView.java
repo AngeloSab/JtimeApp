@@ -2,10 +2,12 @@ package it.unicam.cs.mpgc.jtime119200.gui;
 
 import it.unicam.cs.mpgc.jtime119200.controllers.ReportController;
 import it.unicam.cs.mpgc.jtime119200.domain.Activity;
+import it.unicam.cs.mpgc.jtime119200.model.ActivityViewModel;
 import it.unicam.cs.mpgc.jtime119200.model.ProjectReportModel;
 import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -86,8 +88,6 @@ public class ProjectReportView {
     private VBox createPieChart() {
         VBox pieBar = new VBox();
 
-        Label pieLabel = new Label(projectReportModel.progressBarTitle());
-        pieLabel.getStyleClass().add("ProjectReportView-pieLabel");
         PieChart divisionPie = new PieChart();
         if (projectReportModel.getCompleted() > 0)
             divisionPie.getData().add(new PieChart.Data("Completed", projectReportModel.getCompleted()));
@@ -97,7 +97,7 @@ public class ProjectReportView {
             divisionPie.getData().add(new PieChart.Data("Expired", projectReportModel.getExpired()));
         divisionPie.getStyleClass().add("ProjectReportView-piePie");
 
-        pieBar.getChildren().addAll(pieLabel, divisionPie);
+        pieBar.getChildren().addAll(divisionPie);
 
         return pieBar;
     }
@@ -113,40 +113,66 @@ public class ProjectReportView {
         Label title = new Label(projectReportModel.activityListLabel());
         title.getStyleClass().add("projectReport-activityList");
 
-        VBox activitiesBox = new VBox(5);
+        GridPane table = createActivityTable();
 
-
-        for (Activity activity : projectReportModel.getActivities()){
-            activitiesBox.getChildren().add(createActivityRow(activity));
-        }
-
-        ScrollPane scroll = new ScrollPane(activitiesBox);
+        ScrollPane scroll = new ScrollPane(table);
         scroll.setFitToWidth(true);
-        scroll.setPrefHeight(200);
+        scroll.setPrefHeight(250);
 
         container.getChildren().addAll(title, scroll);
         return container;
     }
 
-    private HBox createActivityRow(Activity activity) {
 
-        HBox row = new HBox(20);
+    private GridPane createActivityTable() {
 
-        Label name = new Label(activity.getTitle());
-        if (activity.isCompleted()) {
-            name.setText(name.getText() + " ✔");
+        GridPane grid = new GridPane();
+        grid.setHgap(20);
+        grid.setVgap(8);
+        grid.getStyleClass().add("activity-table");
+
+        // 🔹 Header
+        String[] headers = {
+                "Date",
+                "Name",
+                "Status",
+                "Start Time",
+                "Expected End",
+                "Actual End",
+                "Expected Dur.",
+                "Actual Dur.",
+                "Dur. Difference"
+        };
+
+        for (int col = 0; col < headers.length; col++) {
+            Label header = new Label(headers[col]);
+            header.getStyleClass().add("activity-table-header");
+            grid.add(header, col, 0);
         }
 
-        Label expected = new Label(activity.getExpectedDuration().toString());
-        Label actual = new Label(
-                activity.isCompleted()
-                        ? (activity.getActualDuration().toString())
-                        : "-"
-        );
+        // 🔹 Rows
+        int rowIndex = 1;
 
-        row.getChildren().addAll(name, expected, actual);
-        return row;
+        for (Activity activity : projectReportModel.getActivities()) {
+            ActivityViewModel vm = new ActivityViewModel(activity);
+
+            grid.add(new Label(vm.getDate().toString()), 0, rowIndex);
+            grid.add(new Label(vm.getTitle()), 1, rowIndex);
+            grid.add(new Label(vm.getStatusSymbol()), 2, rowIndex);
+            grid.add(new Label(vm.getStartTime()), 3, rowIndex);
+            grid.add(new Label(vm.getExpectedEnd()), 4, rowIndex);
+            grid.add(new Label(vm.getActualEndOrDash()), 5, rowIndex);
+            grid.add(new Label(vm.getExpectedDurationMinutes()), 6, rowIndex);
+            grid.add(new Label(vm.getActualDurationOrDash()), 7, rowIndex);
+            grid.add(new Label(vm.getDurationDifference()), 8, rowIndex);
+
+
+            rowIndex++;
+        }
+
+        return grid;
     }
+
 
     private VBox createProgressBar() {
         VBox boxBar = new VBox();
@@ -171,12 +197,23 @@ public class ProjectReportView {
         Button closeAndDelete = new Button("Close & Delete Project");
         closeAndDelete.getStyleClass().add("ProjectReportView-closeAndDeleteButton");
         closeAndDelete.setOnAction(e -> {
-            reportController.deleteProject();
-            stage.close();
+            if (projectReportModel.isCompleted()) {
+                reportController.deleteProject();
+                stage.close();
+            } else {
+                showError("Impossible to delete an uncompleted project");
+            }
         });
 
         buttons.getChildren().addAll(close, closeAndDelete);
         return buttons;
+    }
+
+    private void showError(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setHeaderText("Delete Error");
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
 }

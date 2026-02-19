@@ -43,7 +43,7 @@ public class ActivityView extends StackPane {
         mainPane.getChildren().add(title);
 
 
-        if (viewModel.isClickable()) {
+        if (viewModel.isPlanned()) {
             Button tripleDot = createTripleDot();
             StackPane.setAlignment(tripleDot, Pos.TOP_RIGHT);
 
@@ -66,11 +66,11 @@ public class ActivityView extends StackPane {
         tripleDot.getStyleClass().add("activityView-tripleDot");
 
         MenuItem editItem = new MenuItem("Edit Activity");
-        if (viewModel.isClickable())
+        if (viewModel.isPlanned())
             editItem.setOnAction(event -> controller.onEdit(viewModel));
 
         MenuItem removeItem = new MenuItem("Remove Activity");
-        if (viewModel.isClickable())
+        if (viewModel.isPlanned())
             removeItem.setOnAction(event -> controller.onRemove(viewModel));
 
         removeItem.getStyleClass().add("activity-remove-item");

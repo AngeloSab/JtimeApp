@@ -22,8 +22,11 @@ public class ProjectReportModel {
     public String projectName() {
         return project.getName();
     }
-    public String progressBarTitle() { return "Project Progression"; }
+    public String progressBarTitle() {
+        return "Project Progression: "+String.format("%.2f", progressBarValue()*100)+" %";
+    }
     public float progressBarValue() { return progressCalculator.calculateProgression();}
+
 
     /**
      * Returns the status message of the project based on its completion state.
@@ -38,6 +41,9 @@ public class ProjectReportModel {
         }
     }
 
+    public boolean isCompleted(){
+        return project.isCompleted();
+    }
 
     public double getCompleted() {
         return progressCalculator.completedActivities();

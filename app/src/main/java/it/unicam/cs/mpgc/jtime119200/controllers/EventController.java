@@ -12,6 +12,7 @@ import java.util.List;
 public class EventController {
 
     private final WeeklyViewModel weeklyViewModel;
+
     private ActivityView selectedActivityView;
 
     public EventController(WeeklyViewModel weeklyViewModel) {
