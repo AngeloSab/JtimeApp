@@ -3,12 +3,12 @@ package it.unicam.cs.mpgc.jtime119200.model;
 import it.unicam.cs.mpgc.jtime119200.domain.Activity;
 import it.unicam.cs.mpgc.jtime119200.domain.ActivityStatus;
 import it.unicam.cs.mpgc.jtime119200.domain.service.ActivityTimeCalculator;
+import it.unicam.cs.mpgc.jtime119200.domain.service.TimeServiceProvider;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
-public class ActivityViewModel {
+public class ActivityViewModel extends TimeServiceProvider {
 
     private static final String zone = "Europe/Rome";
     private static final DateTimeFormatter hoursMins = DateTimeFormatter.ofPattern("HH:mm");
@@ -30,11 +30,13 @@ public class ActivityViewModel {
 
     public String getTooltipText() {
         return switch (activity.getStatus()) {
-            case PLANNED -> "Start Time: " + activity.getStartTime().atZone(ZoneId.of(zone)).format(hoursMins) +
-                             "\nExpected End Time " + activity.expectedEndTime().atZone(ZoneId.of(zone)).format(hoursMins);
-            case COMPLETED -> "Started at " + activity.getStartTime().atZone(ZoneId.of(zone)).format(hoursMins)+
-                    "\nExpected End Time " + activity.expectedEndTime().atZone(ZoneId.of(zone)).format(hoursMins) +
-                    "\nActual EndTime: " + calculator.actualEndTime().atZone(ZoneId.of(zone)).format(hoursMins);
+            case PLANNED -> "Start Time: " + getFormattedTime(activity.getStartTime()) +
+                             "\nExpected End Time " + getFormattedTime(activity.expectedEndTime());
+
+            case COMPLETED -> "Started at " + getFormattedTime(activity.getStartTime())+
+                    "\nExpected End Time " + getFormattedTime(activity.expectedEndTime()) +
+                    "\nActual EndTime: " + getFormattedTime(calculator.actualEndTime());
+
             case EXPIRED -> "Activity expired";
         };
     }
@@ -51,14 +53,6 @@ public class ActivityViewModel {
         return activity.getStatus() == ActivityStatus.PLANNED;
     }
 
-    public boolean isCompleted() {
-        return activity.getStatus() == ActivityStatus.COMPLETED;
-    }
-
-    public boolean isExpired() {
-        return activity.getStatus() == ActivityStatus.EXPIRED;
-    }
-
     public Activity getActivity() {
         return activity;
     }
@@ -68,7 +62,7 @@ public class ActivityViewModel {
     }
 
     public String getStartTime() {
-        return activity.getStartTime().atZone(ZoneId.of(zone)).format(hoursMins);
+        return getFormattedTime(activity.getStartTime());
     }
 
     public String getExpectedDurationMinutes() {
@@ -82,11 +76,11 @@ public class ActivityViewModel {
     }
 
     public String getExpectedEnd() {
-        return activity.expectedEndTime().atZone(ZoneId.of(zone)).format(hoursMins);
+        return getFormattedTime(activity.expectedEndTime());
     }
 
     public String getActualEndOrDash() {
-        if (activity.isCompleted()) return calculator.actualEndTime().atZone(ZoneId.of(zone)).format(hoursMins);
+        if (activity.isCompleted()) return getFormattedTime(calculator.actualEndTime());
         else return "-";
     }
 

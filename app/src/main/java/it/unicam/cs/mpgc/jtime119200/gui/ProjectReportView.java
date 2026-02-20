@@ -197,7 +197,7 @@ public class ProjectReportView {
         Button closeAndDelete = new Button("Close & Delete Project");
         closeAndDelete.getStyleClass().add("ProjectReportView-closeAndDeleteButton");
         closeAndDelete.setOnAction(e -> {
-            if (projectReportModel.isCompleted()) {
+            if (projectReportModel.getPlanned() == 0) {
                 reportController.deleteProject();
                 stage.close();
             } else {

@@ -1,6 +1,7 @@
 package it.unicam.cs.mpgc.jtime119200.gui.form;
 
 import it.unicam.cs.mpgc.jtime119200.controllers.ActivityFormMode;
+import it.unicam.cs.mpgc.jtime119200.domain.service.TimeServiceProvider;
 import it.unicam.cs.mpgc.jtime119200.model.form.CreateAndEditActivityFormModel;
 import it.unicam.cs.mpgc.jtime119200.model.ActivityViewModel;
 import javafx.scene.Parent;
@@ -12,7 +13,7 @@ import javafx.stage.Stage;
 
 import java.time.*;
 
-public class CreateAndEditActivityForm {
+public class CreateAndEditActivityForm extends TimeServiceProvider {
 
     private final Stage stage = new Stage();
     private final CreateAndEditActivityFormModel controller;
@@ -116,7 +117,7 @@ public class CreateAndEditActivityForm {
 
     private Instant parseStartTime() {
         LocalTime time = LocalTime.parse(startTimeField.getText());
-        ZonedDateTime zdt = ZonedDateTime.of(day, time, ZoneId.of("UTC+1"));
+        ZonedDateTime zdt = ZonedDateTime.of(day, time, getTimeZone());
         return zdt.toInstant();
     }
 
