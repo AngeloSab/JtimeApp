@@ -1,6 +1,6 @@
 package it.unicam.cs.mpgc.jtime119200.gui.form;
 
-import it.unicam.cs.mpgc.jtime119200.controllers.RemoveActivityController;
+import it.unicam.cs.mpgc.jtime119200.controllers.activityHandler.RemoveActivityController;
 import it.unicam.cs.mpgc.jtime119200.model.ActivityViewModel;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;

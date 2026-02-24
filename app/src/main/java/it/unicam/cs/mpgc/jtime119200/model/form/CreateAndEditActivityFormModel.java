@@ -1,8 +1,8 @@
 package it.unicam.cs.mpgc.jtime119200.model.form;
 
-import it.unicam.cs.mpgc.jtime119200.controllers.ActivityFormMode;
-import it.unicam.cs.mpgc.jtime119200.controllers.CreateActivityController;
-import it.unicam.cs.mpgc.jtime119200.controllers.EditActivityController;
+import it.unicam.cs.mpgc.jtime119200.controllers.activityHandler.ActivityFormMode;
+import it.unicam.cs.mpgc.jtime119200.controllers.activityHandler.CreateActivityController;
+import it.unicam.cs.mpgc.jtime119200.controllers.activityHandler.EditActivityController;
 import it.unicam.cs.mpgc.jtime119200.model.ActivityViewModel;
 import it.unicam.cs.mpgc.jtime119200.model.WeeklyViewModel;
 

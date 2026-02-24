@@ -6,12 +6,12 @@ import it.unicam.cs.mpgc.jtime119200.domain.service.ProjectProgressCalculator;
 
 import java.util.List;
 
-public class ProjectReportModel {
+public class ProjectReportViewModel {
 
     private final Project project;
     private final ProjectProgressCalculator progressCalculator;
 
-    public ProjectReportModel(Project project) {
+    public ProjectReportViewModel(Project project) {
         this.project = project;
         this.progressCalculator = new ProjectProgressCalculator(project);
     }

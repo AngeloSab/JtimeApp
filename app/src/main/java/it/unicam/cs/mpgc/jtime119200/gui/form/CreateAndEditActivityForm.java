@@ -1,6 +1,6 @@
 package it.unicam.cs.mpgc.jtime119200.gui.form;
 
-import it.unicam.cs.mpgc.jtime119200.controllers.ActivityFormMode;
+import it.unicam.cs.mpgc.jtime119200.controllers.activityHandler.ActivityFormMode;
 import it.unicam.cs.mpgc.jtime119200.domain.service.TimeServiceProvider;
 import it.unicam.cs.mpgc.jtime119200.model.form.CreateAndEditActivityFormModel;
 import it.unicam.cs.mpgc.jtime119200.model.ActivityViewModel;

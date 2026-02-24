@@ -1,69 +1,49 @@
 package it.unicam.cs.mpgc.jtime119200.domain;
 
-import java.time.LocalDate;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.*;
 
 /**
  * Represents a calendar for managing projects and activities over multiple days.
- * This class provides methods to:
- * Manage {@link Day} objects for specific dates.
- * Manage {@link Project} objects.
- * Manage {@link Activity} objects associated with projects and days.
- * The calendar ensures that activities do not overlap, and it
- * maintains encapsulation by providing unmodifiable views of its internal collections.
+ * A JtimeCalendar is responsible for:
+ *  - Managing {@link Day} instances corresponding to specific dates
+ *  - Managing {@link Project} instances
+ *  - Managing {@link Activity} instances associated with projects and days
+ *  - Ensuring activities do not overlap within the same day
+ *  - Providing unmodifiable access to its internal collections
  */
-
 public class JtimeCalendar {
 
     private final Map<LocalDate, Day> days = new HashMap<>();
     private final List<Project> projects = new ArrayList<>();
 
-    // ================== DAYS ==================
-
     /**
      * Returns the {@link Day} associated with the given date.
-     * If no Day exists for that date, a new one is created and returned.
+     * If no day exists for that date, a new one is created and returned.
      *
-     * @param date the date for which to retrieve the Day
-     * @return the Day associated with the given date
+     * @param date the date for which to retrieve the day
+     * @return the {@link Day} for the specified date
      */
-
     public Day getDay(LocalDate date) {
         return days.computeIfAbsent(date, Day::new);
     }
 
-
     /**
-     * Return the Day that contain the given Activity
+     * Returns an unmodifiable collection of all {@link Day} instances in the calendar.
      *
-     * @param activity the activity we want to know the day
-     * @return the Day of the Activity
+     * @return an unmodifiable collection of days
      */
-    public Day getDay(Activity activity) {
-        Day dayOfActivity = null;
-        for (Day day : days.values()) {
-            if (day.getActivities().contains(activity)) dayOfActivity=day;
-        }
-        return dayOfActivity;
-    }
-
-    /**
-     * @return an unmodifiable collection of all {@link Day} instances
-     */
-
     public Collection<Day> getAllDays() {
         return Collections.unmodifiableCollection(days.values());
     }
 
-    // ================== PROJECTS ==================
-
     /**
-     * Adds the given project to the calendar.
+     * Adds a {@link Project} to the calendar.
+     * If the project already exists, it is ignored.
      *
      * @param project the project to add
-     * @throws IllegalArgumentException if the project already exists
      */
     public void addProject(Project project) {
         if (projects.contains(project)) return;
@@ -71,10 +51,11 @@ public class JtimeCalendar {
     }
 
     /**
-     * Adds the given project in a string format to the calendar, and return that;
-     * if the project already exist, return that.
+     * Creates a new {@link Project} with the given name if it does not already exist.
+     * If a project with the same name exists, returns that project.
      *
-     * @param projectName the project name (string format) to add
+     * @param projectName the name of the project
+     * @return the existing or newly created project
      */
     public Project createProject(String projectName) {
         for (Project p : projects) {
@@ -88,16 +69,18 @@ public class JtimeCalendar {
     }
 
     /**
-     * @return an unmodifiable list of all projects
+     * Returns an unmodifiable list of all projects in the calendar.
+     *
+     * @return an unmodifiable list of {@link Project}
      */
     public List<Project> getProjects() {
         return Collections.unmodifiableList(projects);
     }
 
     /**
-     * Removes the specified project and all the activities contained in that project.
+     * Removes a project and all its associated activities from the calendar.
      *
-     * @param project the activity to remove
+     * @param project the project to remove
      */
     public void removeProject(Project project) {
         for (Activity activity : project.getActivities()) {
@@ -106,27 +89,25 @@ public class JtimeCalendar {
         projects.remove(project);
     }
 
-    // ================== ACTIVITIES ==================
     /**
-     * Create a new Activity and check if there is overlaps:
-     * if an Activity already exists in the same day, it throws an ActivityOverlapException.
-     * It uses the addActivity() method of the Activity and Project classes.
+     * Creates a new {@link Activity} in the calendar.
+     * Throws {@link ActivityOverlapException} if the new activity overlaps
+     * with an existing activity on the same day.
+     *
      * @param project the project this activity belongs to
      * @param title the title of the activity
-     * @param expectedDuration the expected duration of the activity
+     * @param expectedDuration the expected duration
      * @param startTime the start time of the activity
-     * @param date the date for which the activity is scheduled
-     * @return the newly created Activity
-     * @throws ActivityOverlapException if the activity overlaps another activity on the same day
+     * @param date the date of the activity
+     * @return the newly created {@link Activity}
+     * @throws ActivityOverlapException if the activity overlaps another on the same day
      */
     public Activity createActivity(Project project, String title, Duration expectedDuration, Instant startTime, LocalDate date) {
         Day day = getDay(date);
         Activity newActivity = new Activity(project, title, expectedDuration, startTime, date);
         for (Activity a : day.getActivities()) {
             if (a.overlaps(newActivity)) {
-                throw new ActivityOverlapException(
-                        "Activity overlaps another activity in the same day"
-                );
+                throw new ActivityOverlapException("Activity overlaps another activity in the same day");
             }
         }
         day.addActivity(newActivity);
@@ -135,25 +116,32 @@ public class JtimeCalendar {
     }
 
     /**
-     * Removes the specified activity from the given project and from all days in the calendar.
+     * Removes an activity from a specific project and from its day.
      *
-     * @param project the project from which the activity should be removed
+     * @param project the project containing the activity
      * @param activity the activity to remove
      */
     public void removeActivity(Project project, Activity activity) {
         project.removeActivity(activity);
         Day day = days.get(activity.getDate());
-            day.removeActivity(activity);
+        day.removeActivity(activity);
     }
 
+    /**
+     * Updates an existing activity's project, start time, and expected duration.
+     * Throws {@link ActivityOverlapException} if the updated activity overlaps
+     * another activity on the same day.
+     *
+     * @param activity the activity to edit
+     * @param project the new project for the activity
+     * @param expectedDuration the new expected duration
+     * @param startTime the new start time
+     */
     public void editActivity(Activity activity, Project project, Duration expectedDuration, Instant startTime) {
-
         Day day = getDay(activity.getDate());
         Activity candidate = new Activity(project, activity.getTitle(), expectedDuration, startTime, activity.getDate());
         for (Activity existing : day.getActivities()) {
-            if (existing == activity) {
-                continue;
-            }
+            if (existing == activity) continue;
             if (existing.overlaps(candidate)) {
                 throw new ActivityOverlapException("Activity overlaps another activity in the same day");
             }
@@ -164,8 +152,8 @@ public class JtimeCalendar {
     }
 
     /**
-     * Update the status of all the activities of all days before today,
-     * setting the status on EXPIRED
+     * Updates all past activities, marking them as {@link ActivityStatus#EXPIRED}
+     * if they are still planned.
      */
     public void updateExpiredActivities() {
         for (Day day : days.values()) {
@@ -178,8 +166,4 @@ public class JtimeCalendar {
             }
         }
     }
-
 }
-
-
-

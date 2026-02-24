@@ -1,4 +1,4 @@
-package it.unicam.cs.mpgc.jtime119200.xml;
+package it.unicam.cs.mpgc.jtime119200.repository.xml;
 
 import it.unicam.cs.mpgc.jtime119200.domain.Activity;
 import it.unicam.cs.mpgc.jtime119200.domain.ActivityStatus;

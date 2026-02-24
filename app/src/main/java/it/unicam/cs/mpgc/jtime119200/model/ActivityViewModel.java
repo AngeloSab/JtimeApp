@@ -6,12 +6,9 @@ import it.unicam.cs.mpgc.jtime119200.domain.service.ActivityTimeCalculator;
 import it.unicam.cs.mpgc.jtime119200.domain.service.TimeServiceProvider;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 public class ActivityViewModel extends TimeServiceProvider {
 
-    private static final String zone = "Europe/Rome";
-    private static final DateTimeFormatter hoursMins = DateTimeFormatter.ofPattern("HH:mm");
     private final Activity activity;
     private final ActivityTimeCalculator calculator;
 

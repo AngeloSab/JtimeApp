@@ -1,9 +1,9 @@
 package it.unicam.cs.mpgc.jtime119200.gui;
 
-import it.unicam.cs.mpgc.jtime119200.controllers.ReportController;
+import it.unicam.cs.mpgc.jtime119200.controllers.reportHandler.ReportController;
 import it.unicam.cs.mpgc.jtime119200.domain.Activity;
 import it.unicam.cs.mpgc.jtime119200.model.ActivityViewModel;
-import it.unicam.cs.mpgc.jtime119200.model.ProjectReportModel;
+import it.unicam.cs.mpgc.jtime119200.model.ProjectReportViewModel;
 import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
@@ -16,14 +16,14 @@ public class ProjectReportView {
 
     private final ReportController reportController;
     private final Stage stage = new Stage();
-    private final ProjectReportModel projectReportModel;
+    private final ProjectReportViewModel projectReportViewModel;
 
 
 
     public ProjectReportView(ReportController reportController) {
         this.reportController = reportController;
-        projectReportModel = new ProjectReportModel(reportController.getProject());
-        stage.setTitle(projectReportModel.getTitle());
+        projectReportViewModel = new ProjectReportViewModel(reportController.getProject());
+        stage.setTitle(projectReportViewModel.getTitle());
         Scene scene = new Scene(createRoot());
         scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
         stage.setScene(scene);
@@ -45,10 +45,10 @@ public class ProjectReportView {
     private VBox createHeader() {
         VBox header = new VBox(5);
 
-        Label title = new Label(projectReportModel.projectName());
+        Label title = new Label(projectReportViewModel.projectName());
         title.getStyleClass().add("ProjectReportView-title");
 
-        Label status = new Label(projectReportModel.projectStatus());
+        Label status = new Label(projectReportViewModel.projectStatus());
         status.getStyleClass().add("ProjectReportView-status");
 
         header.getChildren().addAll(title, status);
@@ -73,12 +73,12 @@ public class ProjectReportView {
 
         box.getChildren().addAll(
                 sectionTitle,
-                new Label("Total Expected Duration: " + projectReportModel.getTotalExpected()),
-                new Label("Total Actual Duration: " + projectReportModel.getTotalActual()),
-                new Label("Duration Difference: " + projectReportModel.getTotalDifference()),
-                new Label("Average Expected Duration: " + projectReportModel.getAverageExpected()),
-                new Label("Average Actual Duration: " + projectReportModel.getAverageActual()),
-                new Label("Average Duration Difference: " + projectReportModel.getAverageDifference()),
+                new Label("Total Expected Duration: " + projectReportViewModel.getTotalExpected()),
+                new Label("Total Actual Duration: " + projectReportViewModel.getTotalActual()),
+                new Label("Duration Difference: " + projectReportViewModel.getTotalDifference()),
+                new Label("Average Expected Duration: " + projectReportViewModel.getAverageExpected()),
+                new Label("Average Actual Duration: " + projectReportViewModel.getAverageActual()),
+                new Label("Average Duration Difference: " + projectReportViewModel.getAverageDifference()),
                 createProgressBar()
         );
 
@@ -89,12 +89,12 @@ public class ProjectReportView {
         VBox pieBar = new VBox();
 
         PieChart divisionPie = new PieChart();
-        if (projectReportModel.getCompleted() > 0)
-            divisionPie.getData().add(new PieChart.Data("Completed", projectReportModel.getCompleted()));
-        if (projectReportModel.getPlanned() > 0)
-            divisionPie.getData().add(new PieChart.Data("Planned", projectReportModel.getPlanned()));
-        if (projectReportModel.getExpired() > 0)
-            divisionPie.getData().add(new PieChart.Data("Expired", projectReportModel.getExpired()));
+        if (projectReportViewModel.getCompleted() > 0)
+            divisionPie.getData().add(new PieChart.Data("Completed", projectReportViewModel.getCompleted()));
+        if (projectReportViewModel.getPlanned() > 0)
+            divisionPie.getData().add(new PieChart.Data("Planned", projectReportViewModel.getPlanned()));
+        if (projectReportViewModel.getExpired() > 0)
+            divisionPie.getData().add(new PieChart.Data("Expired", projectReportViewModel.getExpired()));
         divisionPie.getStyleClass().add("ProjectReportView-piePie");
 
         pieBar.getChildren().addAll(divisionPie);
@@ -110,7 +110,7 @@ public class ProjectReportView {
 
         VBox container = new VBox(10);
 
-        Label title = new Label(projectReportModel.activityListLabel());
+        Label title = new Label(projectReportViewModel.activityListLabel());
         title.getStyleClass().add("projectReport-activityList");
 
         GridPane table = createActivityTable();
@@ -153,7 +153,7 @@ public class ProjectReportView {
         // 🔹 Rows
         int rowIndex = 1;
 
-        for (Activity activity : projectReportModel.getActivities()) {
+        for (Activity activity : projectReportViewModel.getActivities()) {
             ActivityViewModel vm = new ActivityViewModel(activity);
 
             grid.add(new Label(vm.getDate().toString()), 0, rowIndex);
@@ -177,9 +177,9 @@ public class ProjectReportView {
     private VBox createProgressBar() {
         VBox boxBar = new VBox();
 
-        Label progressLabel = new Label(projectReportModel.progressBarTitle());
+        Label progressLabel = new Label(projectReportViewModel.progressBarTitle());
         progressLabel.getStyleClass().add("ProjectReportView-progressLabel");
-        ProgressBar progressBar = new ProgressBar(projectReportModel.progressBarValue());
+        ProgressBar progressBar = new ProgressBar(projectReportViewModel.progressBarValue());
         progressBar.getStyleClass().add("ProjectReportView-progressBar");
         boxBar.getChildren().addAll(progressLabel, progressBar);
 
@@ -197,7 +197,7 @@ public class ProjectReportView {
         Button closeAndDelete = new Button("Close & Delete Project");
         closeAndDelete.getStyleClass().add("ProjectReportView-closeAndDeleteButton");
         closeAndDelete.setOnAction(e -> {
-            if (projectReportModel.getPlanned() == 0) {
+            if (projectReportViewModel.getPlanned() == 0) {
                 reportController.deleteProject();
                 stage.close();
             } else {
