@@ -11,9 +11,20 @@ import javafx.scene.layout.VBox;
 
 import java.time.Duration;
 
+/**
+ * Form used to complete an activity by entering its actual duration.
+ * Displays a text field for the duration and provides confirm and cancel buttons.
+ */
 public class CompleteActivityForm extends VBox {
+
     private final CompleteActivityController controller;
 
+    /**
+     * Constructs the form for completing an activity.
+     *
+     * @param viewModel the view model representing the activity
+     * @param completeActivityController the controller handling form actions
+     */
     public CompleteActivityForm(ActivityViewModel viewModel, CompleteActivityController completeActivityController) {
         this.controller = completeActivityController;
         this.getStyleClass().add("completeActivityForm");
@@ -26,14 +37,13 @@ public class CompleteActivityForm extends VBox {
         durationField.setPromptText("Insert actual Duration");
         durationField.getStyleClass().add("CompleteActivityForm-title");
 
-
         HBox buttons = new HBox(2);
         Button confirmButton = new Button("Complete");
         confirmButton.setOnAction(event -> {
             try {
-            Duration duration = Duration.ofMinutes(Long.parseLong(durationField.getText()));
-            if (duration.toMinutes() <= 0 || duration.toMinutes()>900) throw new Exception("Invalid duration");
-            controller.confirmComplete(duration);
+                Duration duration = Duration.ofMinutes(Long.parseLong(durationField.getText()));
+                if (duration.toMinutes() <= 0 || duration.toMinutes() > 900) throw new Exception("Invalid duration");
+                controller.confirmComplete(duration);
             } catch (Exception e) {
                 showError(e.getMessage());
             }
@@ -49,6 +59,11 @@ public class CompleteActivityForm extends VBox {
         this.getChildren().addAll(titleLabel, durationField, buttons);
     }
 
+    /**
+     * Displays an error alert with the given message.
+     *
+     * @param message the message to display in the alert
+     */
     private void showError(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setHeaderText("Invalid data");

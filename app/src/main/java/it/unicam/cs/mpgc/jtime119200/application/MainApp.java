@@ -26,7 +26,7 @@ public class MainApp extends Application {
     private static final int HEIGHT = 800;
 
     private final JtimeCalendar calendar = new JtimeCalendar();
-    CalendarRepositoryXML calendarRepository = new CalendarRepositoryXML();
+    private final CalendarRepositoryXML calendarRepository = new CalendarRepositoryXML();
     private WeeklyView weeklyView;
 
     /**

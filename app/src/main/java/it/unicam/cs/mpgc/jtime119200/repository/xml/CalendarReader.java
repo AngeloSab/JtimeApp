@@ -20,14 +20,29 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Reads calendar data from an XML file and loads it into a JtimeCalendar instance.
+ * It reconstructs projects, days, and activities with their status.
+ */
 public class CalendarReader {
 
     private final File file;
 
+    /**
+     * Initializes the reader with the given XML file.
+     *
+     * @param file the XML file containing calendar data
+     */
     public CalendarReader(File file) {
         this.file = file;
     }
 
+    /**
+     * Loads the calendar data from the XML file into the provided JtimeCalendar.
+     * Projects, days, and activities are recreated along with their status.
+     *
+     * @param calendar the calendar to populate with data from XML
+     */
     public void saveRead(JtimeCalendar calendar) {
         if (!file.exists()) return; // niente da leggere
         DocumentBuilder builder;
@@ -46,9 +61,7 @@ public class CalendarReader {
         }
         doc.getDocumentElement().normalize();
 
-        // --------------------------
-        // 1️⃣ Carica i progetti
-        // --------------------------
+        // projects
         Map<String, Project> projectMap = new HashMap<>();
         NodeList projectNodes = doc.getElementsByTagName("Project");
         for (int i = 0; i < projectNodes.getLength(); i++) {
@@ -60,9 +73,7 @@ public class CalendarReader {
             projectMap.put(name, project);
         }
 
-        // --------------------------
-        // 2️⃣ Carica i giorni e le attività
-        // --------------------------
+        // days and activities
         NodeList dayNodes = doc.getElementsByTagName("Day");
         for (int i = 0; i < dayNodes.getLength(); i++) {
             Element dayElem = (Element) dayNodes.item(i);

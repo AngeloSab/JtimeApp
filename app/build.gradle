@@ -41,7 +41,7 @@ java {
 
 application {
     // Define the main class for the application.
-    mainClass = 'it.unicam.cs.mpgc.jtime119200.MainApp'
+    mainClass = 'it.unicam.cs.mpgc.jtime119200.application.MainApp'
 }
 
 tasks.named('test') {

@@ -12,14 +12,27 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+/**
+ * Graphical view responsible for displaying a detailed report of a project.
+ * This class builds a dedicated window containing:
+ * project summary information, statistical overview,
+ * a pie chart representing activity distribution,
+ * a detailed activity table, and management actions.
+ * It relies on {@link ProjectReportViewModel} to provide
+ * all presentation-ready data and delegates business operations
+ * such as project deletion to the {@link ReportController}.
+ */
 public class ProjectReportView {
 
     private final ReportController reportController;
     private final Stage stage = new Stage();
     private final ProjectReportViewModel projectReportViewModel;
 
-
-
+    /**
+     * Creates and displays a new project report window.
+     *
+     * @param reportController the controller responsible for report-related actions
+     */
     public ProjectReportView(ReportController reportController) {
         this.reportController = reportController;
         projectReportViewModel = new ProjectReportViewModel(reportController.getProject());
@@ -28,9 +41,14 @@ public class ProjectReportView {
         scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
         stage.setScene(scene);
         stage.show();
-
     }
 
+    /**
+     * Creates the root container of the report view,
+     * assembling all UI sections.
+     *
+     * @return the root layout container
+     */
     private VBox createRoot() {
 
         VBox root = new VBox(20);
@@ -42,6 +60,11 @@ public class ProjectReportView {
         return root;
     }
 
+    /**
+     * Creates the header section displaying project name and status.
+     *
+     * @return the header container
+     */
     private VBox createHeader() {
         VBox header = new VBox(5);
 
@@ -55,6 +78,12 @@ public class ProjectReportView {
         return header;
     }
 
+    /**
+     * Creates the top section containing the overview box
+     * and the activity distribution pie chart.
+     *
+     * @return the horizontal container
+     */
     private HBox createTopSection() {
         HBox container = new HBox(40);
 
@@ -65,6 +94,12 @@ public class ProjectReportView {
         return container;
     }
 
+    /**
+     * Creates the overview box showing aggregated
+     * duration statistics and progression.
+     *
+     * @return the overview container
+     */
     private VBox createOverviewBox() {
         VBox box = new VBox(8);
 
@@ -85,6 +120,12 @@ public class ProjectReportView {
         return box;
     }
 
+    /**
+     * Creates a pie chart representing the distribution
+     * of activities by status.
+     *
+     * @return the container holding the pie chart
+     */
     private VBox createPieChart() {
         VBox pieBar = new VBox();
 
@@ -102,10 +143,21 @@ public class ProjectReportView {
         return pieBar;
     }
 
+    /**
+     * Creates a separator used to visually divide sections.
+     *
+     * @return a Separator instance
+     */
     private Separator createSeparator() {
         return new Separator();
     }
 
+    /**
+     * Creates the activity list section, including
+     * the activity table wrapped in a scroll pane.
+     *
+     * @return the activity list container
+     */
     private VBox createActivityList() {
 
         VBox container = new VBox(10);
@@ -123,7 +175,12 @@ public class ProjectReportView {
         return container;
     }
 
-
+    /**
+     * Creates the grid-based table displaying
+     * detailed information for each activity.
+     *
+     * @return the populated GridPane
+     */
     private GridPane createActivityTable() {
 
         GridPane grid = new GridPane();
@@ -131,18 +188,7 @@ public class ProjectReportView {
         grid.setVgap(8);
         grid.getStyleClass().add("activity-table");
 
-        // 🔹 Header
-        String[] headers = {
-                "Date",
-                "Name",
-                "Status",
-                "Start Time",
-                "Expected End",
-                "Actual End",
-                "Expected Dur.",
-                "Actual Dur.",
-                "Dur. Difference"
-        };
+        String[] headers = projectReportViewModel.headersStrings();
 
         for (int col = 0; col < headers.length; col++) {
             Label header = new Label(headers[col]);
@@ -150,7 +196,6 @@ public class ProjectReportView {
             grid.add(header, col, 0);
         }
 
-        // 🔹 Rows
         int rowIndex = 1;
 
         for (Activity activity : projectReportViewModel.getActivities()) {
@@ -166,14 +211,17 @@ public class ProjectReportView {
             grid.add(new Label(vm.getActualDurationOrDash()), 7, rowIndex);
             grid.add(new Label(vm.getDurationDifference()), 8, rowIndex);
 
-
             rowIndex++;
         }
 
         return grid;
     }
 
-
+    /**
+     * Creates the progression bar section.
+     *
+     * @return the container holding the progress bar
+     */
     private VBox createProgressBar() {
         VBox boxBar = new VBox();
 
@@ -186,6 +234,12 @@ public class ProjectReportView {
         return boxBar;
     }
 
+    /**
+     * Creates the bottom section containing
+     * the report management buttons.
+     *
+     * @return the button container
+     */
     private HBox createBottomButtons() {
 
         HBox buttons = new HBox(20);
@@ -201,7 +255,7 @@ public class ProjectReportView {
                 reportController.deleteProject();
                 stage.close();
             } else {
-                showError("Impossible to delete an uncompleted project");
+                showError();
             }
         });
 
@@ -209,10 +263,14 @@ public class ProjectReportView {
         return buttons;
     }
 
-    private void showError(String message) {
+    /**
+     * Displays an error alert when deletion
+     * of the project is not allowed.
+     */
+    private void showError() {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setHeaderText("Delete Error");
-        alert.setContentText(message);
+        alert.setContentText("Impossible to delete an uncompleted project");
         alert.showAndWait();
     }
 

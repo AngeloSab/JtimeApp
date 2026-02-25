@@ -12,11 +12,21 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+/**
+ * Form used to confirm the removal of an activity.
+ * Displays activity details and provides confirm and cancel options.
+ */
 public class RemoveActivityForm {
     private final ActivityViewModel activityViewModel;
     private final RemoveActivityController removeActivityController;
     Stage stage = new Stage();
 
+    /**
+     * Constructs the removal form for a specific activity.
+     *
+     * @param removeActivityController the controller managing the removal
+     * @param activity the activity to be removed
+     */
     public RemoveActivityForm(RemoveActivityController removeActivityController, ActivityViewModel activity) {
         this.activityViewModel = activity;
         this.removeActivityController = removeActivityController;
@@ -26,6 +36,12 @@ public class RemoveActivityForm {
         stage.show();
     }
 
+    /**
+     * Creates the main layout of the removal confirmation form,
+     * including activity details and action buttons.
+     *
+     * @return the root node of the form
+     */
     private Parent createRoot() {
 
         BorderPane root = new BorderPane();
@@ -36,7 +52,6 @@ public class RemoveActivityForm {
         BorderPane.setAlignment(title, Pos.CENTER);
         root.setTop(title);
 
-        // Info box
         VBox infoBox = new VBox(10);
 
         Label confirmation = new Label("Are you sure you want to remove this activity?");
@@ -69,5 +84,4 @@ public class RemoveActivityForm {
 
         return root;
     }
-
 }

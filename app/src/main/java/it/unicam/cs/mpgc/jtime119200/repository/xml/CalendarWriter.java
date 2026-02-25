@@ -19,14 +19,29 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Writes calendar data into an XML file.
+ * Saves projects, days, and activities with their details and status.
+ */
 public class CalendarWriter {
 
         private final File file;
 
+        /**
+         * Initializes the writer with the specified XML file.
+         *
+         * @param file the XML file where calendar data will be saved
+         */
         public CalendarWriter(File file) {
                 this.file = file;
         }
 
+        /**
+         * Saves the content of the given JtimeCalendar into the XML file.
+         * All projects, days, and activities are written along with their attributes.
+         *
+         * @param calendar the calendar to save into XML
+         */
         public void saveWrite(JtimeCalendar calendar) {
                 try {
                         DocumentBuilder builder = DocumentBuilderFactory
@@ -34,11 +49,10 @@ public class CalendarWriter {
                                 .newDocumentBuilder();
                         Document doc = builder.newDocument();
 
-                        // ROOT
                         Element root = doc.createElement("Calendar");
                         doc.appendChild(root);
 
-                        // PROJECTS
+                        // projects
                         Element projectsEl = doc.createElement("Projects");
                         root.appendChild(projectsEl);
 
@@ -51,7 +65,7 @@ public class CalendarWriter {
                                 }
                         }
 
-                        // DAYS + ACTIVITIES
+                        // days and activities
                         Element daysEl = doc.createElement("Days");
                         root.appendChild(daysEl);
 

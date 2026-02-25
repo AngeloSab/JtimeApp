@@ -13,6 +13,11 @@ import javafx.stage.Stage;
 
 import java.time.*;
 
+/**
+ * Form used to create a new activity or edit an existing one.
+ * Provides fields for project, title, start time, and expected duration.
+ * Handles validation and submission through the associated controller.
+ */
 public class CreateAndEditActivityForm extends TimeServiceProvider {
 
     private final Stage stage = new Stage();
@@ -24,6 +29,12 @@ public class CreateAndEditActivityForm extends TimeServiceProvider {
     private TextField startTimeField;
     private TextField durationField;
 
+    /**
+     * Constructs the form for creating or editing an activity.
+     *
+     * @param controller the controller managing the form actions
+     * @param day the day for which the activity is being created or edited
+     */
     public CreateAndEditActivityForm(CreateAndEditActivityFormModel controller, LocalDate day) {
         this.controller = controller;
         this.day = day;
@@ -33,12 +44,22 @@ public class CreateAndEditActivityForm extends TimeServiceProvider {
         stage.show();
     }
 
+    /**
+     * Returns the window title based on the mode (create or edit).
+     *
+     * @return the title string
+     */
     private String getTitle() {
         return controller.getMode() == ActivityFormMode.CREATE
                 ? "Create new Activity"
                 : "Edit Activity";
     }
 
+    /**
+     * Creates the main layout of the form including input fields and buttons.
+     *
+     * @return the root parent node
+     */
     private Parent createRoot() {
         VBox root = new VBox(10);
         root.getStyleClass().add("dialog-root");
@@ -74,6 +95,9 @@ public class CreateAndEditActivityForm extends TimeServiceProvider {
         return root;
     }
 
+    /**
+     * Preloads the input fields with values from the activity being edited.
+     */
     private void preloadFields() {
         ActivityViewModel activityVM = controller.getActivityToEdit();
 
@@ -83,6 +107,11 @@ public class CreateAndEditActivityForm extends TimeServiceProvider {
         durationField.setText(activityVM.getExpectedDurationMinutes());
     }
 
+    /**
+     * Creates the submit and cancel buttons for the form.
+     *
+     * @return a horizontal box containing the buttons
+     */
     private HBox createButtons() {
         Button submit = new Button(controller.getMode() == ActivityFormMode.CREATE ? "Create" : "Save");
         submit.getStyleClass().add("dialog-submit");
@@ -95,6 +124,10 @@ public class CreateAndEditActivityForm extends TimeServiceProvider {
         return new HBox(10, submit, cancel);
     }
 
+    /**
+     * Handles the submission of the form.
+     * Validates input, converts data types, and delegates to the controller.
+     */
     private void onSubmit() {
         try {
             String project = projectField.getText();
@@ -103,7 +136,7 @@ public class CreateAndEditActivityForm extends TimeServiceProvider {
             if (title.isEmpty()) throw new Exception("Activity name cannot be empty");
 
             Duration duration = Duration.ofMinutes(Long.parseLong(durationField.getText()));
-            if (duration.isNegative() || duration.toMinutes()>900) throw new Exception("Invalid duration");
+            if (duration.isNegative() || duration.toMinutes() > 900) throw new Exception("Invalid duration");
 
             Instant startTime = parseStartTime();
 
@@ -115,12 +148,22 @@ public class CreateAndEditActivityForm extends TimeServiceProvider {
         }
     }
 
+    /**
+     * Parses the start time from the text field and converts it to an Instant.
+     *
+     * @return the parsed start time as Instant
+     */
     private Instant parseStartTime() {
         LocalTime time = LocalTime.parse(startTimeField.getText());
         ZonedDateTime zdt = ZonedDateTime.of(day, time, getTimeZone());
         return zdt.toInstant();
     }
 
+    /**
+     * Shows an error alert with the given message.
+     *
+     * @param message the message to display in the alert
+     */
     private void showError(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setHeaderText("Invalid data");
