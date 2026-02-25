@@ -22,7 +22,6 @@ import java.time.LocalDate;
  */
 public class DailyView extends VBox {
     private final DailyViewModel viewModel;
-    //private final Consumer<LocalDate> onDayHeaderClicked;
     private final EventController controller;
 
     /**
@@ -55,6 +54,8 @@ public class DailyView extends VBox {
         scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         VBox.setVgrow(scroll, Priority.ALWAYS);
+        this.setMaxHeight(Double.MAX_VALUE);
+        scroll.setMaxHeight(Double.MAX_VALUE);
 
         this.getChildren().addAll(header, scroll);
     }
@@ -70,6 +71,7 @@ public class DailyView extends VBox {
     private VBox createDayHeader() {
 
         VBox header = new VBox();
+        header.setMaxWidth(Double.MAX_VALUE);
         header.getStyleClass().add("dailyView-header");
 
         Label dailyViewTitle = new Label(viewModel.getDateLabel());

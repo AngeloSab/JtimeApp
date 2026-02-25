@@ -40,7 +40,11 @@ public class CreateAndEditActivityForm extends TimeServiceProvider {
         this.day = day;
 
         stage.setTitle(getTitle());
-        stage.setScene(new Scene(createRoot(), 400, 350));
+        Scene scene = new Scene(createRoot());
+        stage.setScene(scene);
+        stage.setWidth(350);
+        stage.setHeight(450);
+        scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
         stage.show();
     }
 
@@ -62,7 +66,7 @@ public class CreateAndEditActivityForm extends TimeServiceProvider {
      */
     private Parent createRoot() {
         VBox root = new VBox(10);
-        root.getStyleClass().add("dialog-root");
+        root.getStyleClass().add("createAndEditActivityForm-dialog-root");
 
         projectField = new TextField();
         projectField.setPromptText("Project");
@@ -76,22 +80,25 @@ public class CreateAndEditActivityForm extends TimeServiceProvider {
         durationField = new TextField();
         durationField.setPromptText("Expected duration (minutes)");
 
+
         if (controller.getMode() == ActivityFormMode.EDIT) {
             preloadFields();
         }
 
-        root.getChildren().addAll(
-                new Label("Project"),
-                projectField,
-                new Label("Title"),
-                titleField,
-                new Label("Start time"),
-                startTimeField,
-                new Label("Duration"),
-                durationField,
-                createButtons()
-        );
+        Label project = new Label("Project");
+        project.getStyleClass().add("createAndEditActivityForm-project");
+        Label title = new Label("Title");
+        title.getStyleClass().add("createAndEditActivityForm-title");
+        Label start = new Label("Start time");
+        start.getStyleClass().add("createAndEditActivityForm-start");
+        Label duration = new Label("Duration");
+        duration.getStyleClass().add("createAndEditActivityForm-duration");
 
+        root.getChildren().addAll(project, projectField,
+                                    title, titleField,
+                                    start, startTimeField,
+                                    duration, durationField,
+                                    createButtons());
         return root;
     }
 
@@ -114,11 +121,11 @@ public class CreateAndEditActivityForm extends TimeServiceProvider {
      */
     private HBox createButtons() {
         Button submit = new Button(controller.getMode() == ActivityFormMode.CREATE ? "Create" : "Save");
-        submit.getStyleClass().add("dialog-submit");
+        submit.getStyleClass().add("createAndEditActivityForm-dialog-submit");
         submit.setOnAction(e -> onSubmit());
 
         Button cancel = new Button("Cancel");
-        cancel.getStyleClass().add("dialog-cancel");
+        cancel.getStyleClass().add("createAndEditActivityForm-dialog-cancel");
         cancel.setOnAction(e -> stage.close());
 
         return new HBox(10, submit, cancel);

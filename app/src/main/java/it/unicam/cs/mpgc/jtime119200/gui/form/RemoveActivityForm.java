@@ -2,7 +2,6 @@ package it.unicam.cs.mpgc.jtime119200.gui.form;
 
 import it.unicam.cs.mpgc.jtime119200.controllers.activityHandler.RemoveActivityController;
 import it.unicam.cs.mpgc.jtime119200.model.ActivityViewModel;
-import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -31,8 +30,12 @@ public class RemoveActivityForm {
         this.activityViewModel = activity;
         this.removeActivityController = removeActivityController;
 
-        stage.setTitle(activityViewModel.getTitle());
-        stage.setScene(new Scene(createRoot(), 400, 350));
+        stage.setTitle("Activity Remove");
+        Scene scene = new Scene(createRoot());
+        stage.setScene(scene);
+        stage.setWidth(350);
+        stage.setHeight(300);
+        scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
         stage.show();
     }
 
@@ -45,23 +48,19 @@ public class RemoveActivityForm {
     private Parent createRoot() {
 
         BorderPane root = new BorderPane();
-        root.getStyleClass().add("root");
-
-        Label title = new Label("Remove Activity");
-        title.getStyleClass().add("dialog-title");
-        BorderPane.setAlignment(title, Pos.CENTER);
-        root.setTop(title);
+        root.getStyleClass().add("removeActivityForm-root");
 
         VBox infoBox = new VBox(10);
+        infoBox.getStyleClass().add("removeActivityForm-infoBox");
 
         Label confirmation = new Label("Are you sure you want to remove this activity?");
-        confirmation.getStyleClass().add("dialog-confirmation");
+        confirmation.getStyleClass().add("removeActivityForm-dialog-confirmation");
         Label activityTitle = new Label("Title: " + activityViewModel.getTitle());
-        activityTitle.getStyleClass().add("dialog-title");
+        activityTitle.getStyleClass().add("removeActivityForm-info");
         Label project = new Label("Project: " + activityViewModel.getProject());
-        project.getStyleClass().add("dialog-project");
+        project.getStyleClass().add("removeActivityForm-info");
         Label date = new Label("Date: " + activityViewModel.getDate().toString());
-        date.getStyleClass().add("dialog-date");
+        date.getStyleClass().add("removeActivityForm-info");
 
         infoBox.getChildren().addAll(confirmation, activityTitle, project, date);
 
@@ -72,13 +71,14 @@ public class RemoveActivityForm {
             removeActivityController.removeActivity(activityViewModel);
             stage.close();
         });
-        confirm.getStyleClass().add("dialog-confirm");
+        confirm.getStyleClass().add("removeActivityForm-dialog-confirm");
 
         Button cancel = new Button("Cancel");
-        cancel.getStyleClass().add("dialog-cancel");
+        cancel.getStyleClass().add("removeActivityForm-dialog-cancel");
         cancel.setOnAction(e -> stage.close());
 
         HBox buttonBox = new HBox(15, confirm, cancel);
+        buttonBox.getStyleClass().add("removeActivityForm-buttons");
 
         root.setBottom(buttonBox);
 
